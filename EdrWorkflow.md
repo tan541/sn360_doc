@@ -36,6 +36,28 @@ If the enviroment scaffolds a similar TypeScript setup that supports ReactFlow q
 - Single page layout with multiple tabs.
     - Tab 1 for Endpoint Agent State
     - Tab 2 for dataflow for log collector modules
+    - Tab 3 for Attack Vectors on Kubernetes. Below is mermaid version:
+    ```mermaid
+    flowchart LR
+        ATK["🔴 Attacker"]
+    
+        ATK -->|"1"| V1["RCE / Command Injection"]
+        ATK -->|"2"| V2["Supply Chain Attack"]
+        ATK -->|"3"| V3["Credential Theft"]
+    
+        subgraph K8s["Kubernetes Cluster"]
+            direction TB
+            POD["📦 Pod"]
+            NODE["Host Node"]
+        end
+    
+        V1 --> WAF["WAF"] -->|"bypass & exploit"| POD
+        V2 --> REG["Registry"] -->|"pull malicious image"| POD
+        V3 --> API["K8s API"] -->|"stolen token"| POD
+    
+        POD -->|"post-exploit"| POST["Webshell - C2 - Exfil - Cryptomining - Backdoor"]
+        POD -->|"escape"| NODE
+    ```
 - Each state is a node
 - Appear one after another
 

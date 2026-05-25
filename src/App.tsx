@@ -99,10 +99,87 @@ const IconManager = () => (
   </svg>
 );
 
+// --- Hacker Custom Icons for Tab 3 ---
 
+const IconAttacker = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 2v2M12 20v2M4 12H2M22 12h-2" />
+    <circle cx="12" cy="12" r="6" strokeDasharray="3 3" />
+    <circle cx="12" cy="12" r="2" />
+  </svg>
+);
+
+const IconRCE = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="4 17 10 11 4 5" />
+    <line x1="12" x2="20" y1="19" y2="19" />
+  </svg>
+);
+
+const IconSupplyChain = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+    <path d="M7.5 8h9M7.5 12h9M7.5 16h9" />
+  </svg>
+);
+
+const IconCredentials = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  </svg>
+);
+
+const IconWAF = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="18" height="18" x="3" y="3" rx="2" />
+    <path d="M3 9h18M3 15h18M9 3v18M15 3v18" />
+  </svg>
+);
+
+const IconRegistry = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+  </svg>
+);
+
+const IconAPI = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1" />
+    <path d="M18 8h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-4" />
+    <line x1="10" x2="18" y1="12" y2="12" />
+  </svg>
+);
+
+const IconPod = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+    <line x1="12" x2="12" y1="22.08" y2="12" />
+  </svg>
+);
+
+const IconHostNode = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="20" height="6" x="2" y="2" rx="2" />
+    <rect width="20" height="6" x="2" y="9" rx="2" />
+    <rect width="20" height="6" x="2" y="16" rx="2" />
+    <line x1="6" x2="6.01" y1="5" y2="5" />
+    <line x1="6" x2="6.01" y1="12" y2="12" />
+    <line x1="6" x2="6.01" y1="19" y2="19" />
+  </svg>
+);
+
+const IconPostExploit = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    <path d="m19.5 9.5 2.5 2.5-2.5 2.5" />
+  </svg>
+);
 
 // ==========================================
-// 2. Custom Node Component
+// 2. Custom Node Components
 // ==========================================
 
 const CustomNodeComponent = ({ data }: any) => {
@@ -112,7 +189,7 @@ const CustomNodeComponent = ({ data }: any) => {
       <Handle type="target" position={Position.Top} id="top" style={{ background: data.glow }} />
       <Handle type="source" position={Position.Bottom} id="bottom" style={{ background: data.glow }} />
       
-      {/* Standard horizontal handles for Tab 2 */}
+      {/* Standard horizontal handles for Tab 2 & 3 */}
       <Handle type="target" position={Position.Left} id="left" style={{ background: data.glow }} />
       <Handle type="source" position={Position.Right} id="right" style={{ background: data.glow }} />
       
@@ -139,13 +216,37 @@ const CustomNodeComponent = ({ data }: any) => {
   );
 };
 
+const K8sClusterNodeComponent = () => {
+  return (
+    <div className="k8s-cluster-container">
+      <div className="k8s-cluster-header">
+        <span className="cluster-pulse" />
+        KUBERNETES CLUSTER
+      </div>
+    </div>
+  );
+};
+
 const nodeTypes = {
   custom: CustomNodeComponent,
+  'k8s-cluster': K8sClusterNodeComponent,
 };
 
 // ==========================================
 // 3. Tab Datasets Definition
 // ==========================================
+
+interface EdgeConfig {
+  id: string;
+  source: string;
+  target: string;
+  sourceHandle: string;
+  targetHandle: string;
+  appearsAt: number;
+  color: string;
+  type?: string;
+  label?: string;
+}
 
 // --- TAB 1: Endpoint Agent State Flow ---
 const tab1NodesRaw = [
@@ -194,18 +295,6 @@ const tab1NodesRaw = [
     y: 520,
   },
 ];
-
-interface EdgeConfig {
-  id: string;
-  source: string;
-  target: string;
-  sourceHandle: string;
-  targetHandle: string;
-  appearsAt: number;
-  color: string;
-  type?: string;
-  label?: string;
-}
 
 const tab1EdgesRaw: EdgeConfig[] = [
   {
@@ -414,8 +503,167 @@ const tab2EdgesRaw: EdgeConfig[] = [
   { id: 'es-m', source: 'shipper', target: 'manager', sourceHandle: 'right', targetHandle: 'left', appearsAt: 5, color: 'var(--accent-cyan)' },
 ];
 
+// --- TAB 3: Attack Vectors on Kubernetes ---
+const tab3NodesRaw = [
+  // Column 1: Attacker (Appears at Step 1)
+  {
+    id: 'ATK',
+    appearsAt: 1,
+    badge: 'THREAT ACTOR',
+    title: '🔴 Attacker',
+    description: 'External adversary conducting remote host scanning and exploit staging.',
+    glow: 'var(--accent-rose)',
+    icon: <IconAttacker />,
+    x: 30,
+    y: 245,
+  },
+  // Column 2: Vectors (Appears at Step 1)
+  {
+    id: 'V1',
+    appearsAt: 1,
+    badge: 'VECTOR 1',
+    title: 'RCE / Command Injection',
+    description: 'Exploiting input parameters to execute arbitrary system code on backend.',
+    glow: 'var(--accent-amber)',
+    icon: <IconRCE />,
+    x: 330,
+    y: 30,
+  },
+  {
+    id: 'V2',
+    appearsAt: 1,
+    badge: 'VECTOR 2',
+    title: 'Supply Chain Hijack',
+    description: 'Compromising third-party dependencies or injecting malicious docker layers.',
+    glow: 'var(--accent-amber)',
+    icon: <IconSupplyChain />,
+    x: 330,
+    y: 245,
+  },
+  {
+    id: 'V3',
+    appearsAt: 1,
+    badge: 'VECTOR 3',
+    title: 'Credential Theft',
+    description: 'Harvesting active service tokens or leaking administrative account secrets.',
+    glow: 'var(--accent-amber)',
+    icon: <IconCredentials />,
+    x: 330,
+    y: 460,
+  },
+  
+  // Column 3: Gateways (Appears at Step 2)
+  {
+    id: 'WAF',
+    appearsAt: 2,
+    badge: 'PERIMETER',
+    title: 'WAF Bypass',
+    description: 'Evading active WAF rule matches using encoding or unknown payload scripts.',
+    glow: 'var(--accent-indigo)',
+    icon: <IconWAF />,
+    x: 630,
+    y: 30,
+  },
+  {
+    id: 'REG',
+    appearsAt: 2,
+    badge: 'REGISTRY',
+    title: 'Malicious Base Registry',
+    description: 'Container registry seeding. Holds backdoored docker libraries.',
+    glow: 'var(--accent-indigo)',
+    icon: <IconRegistry />,
+    x: 630,
+    y: 245,
+  },
+  {
+    id: 'API',
+    appearsAt: 2,
+    badge: 'CONTROL PLANE',
+    title: 'K8s API Server Access',
+    description: 'Authenticating malicious actions using stolen service account certificates.',
+    glow: 'var(--accent-indigo)',
+    icon: <IconAPI />,
+    x: 630,
+    y: 460,
+  },
+  
+  // Column 4: Cluster Container Subgraph Node (Appears at Step 3)
+  {
+    id: 'K8s',
+    appearsAt: 3,
+    type: 'k8s-cluster',
+    x: 930,
+    y: 30,
+    width: 290,
+    height: 490,
+  },
+  // Inside Cluster: Child Workloads
+  {
+    id: 'POD',
+    appearsAt: 3,
+    parentNode: 'K8s',
+    extent: 'parent',
+    badge: 'COMPROMISED WORKLOAD',
+    title: '📦 Targeted Pod',
+    description: 'Sandboxed application container hosting compromised service shells.',
+    glow: 'var(--accent-pink)',
+    icon: <IconPod />,
+    x: 20,
+    y: 110,
+  },
+  {
+    id: 'NODE',
+    appearsAt: 5,
+    parentNode: 'K8s',
+    extent: 'parent',
+    badge: 'HOST CLUSTER LEASE',
+    title: 'Host Node Breakout',
+    description: 'Escaped container layer accessing host processes and physical hypervisor nodes.',
+    glow: 'var(--accent-rose)',
+    icon: <IconHostNode />,
+    x: 20,
+    y: 320,
+  },
+  
+  // Column 5: Post Exploitation (Appears at Step 4)
+  {
+    id: 'POST',
+    appearsAt: 4,
+    badge: 'C2 POST-EXPLOIT',
+    title: 'C2 Webshell Tunnel',
+    description: 'Active webshell establishing external reverse command channels and mining data.',
+    glow: 'var(--accent-rose)',
+    icon: <IconPostExploit />,
+    x: 1290,
+    y: 140,
+  },
+];
+
+const tab3EdgesRaw: EdgeConfig[] = [
+  // Step 1: Attacker to Vectors
+  { id: 'eat-v1', source: 'ATK', target: 'V1', sourceHandle: 'right', targetHandle: 'left', appearsAt: 1, color: 'var(--accent-rose)' },
+  { id: 'eat-v2', source: 'ATK', target: 'V2', sourceHandle: 'right', targetHandle: 'left', appearsAt: 1, color: 'var(--accent-rose)' },
+  { id: 'eat-v3', source: 'ATK', target: 'V3', sourceHandle: 'right', targetHandle: 'left', appearsAt: 1, color: 'var(--accent-rose)' },
+  
+  // Step 2: Vectors to Gateways
+  { id: 'ev1-w', source: 'V1', target: 'WAF', sourceHandle: 'right', targetHandle: 'left', appearsAt: 2, color: 'var(--accent-amber)' },
+  { id: 'ev2-r', source: 'V2', target: 'REG', sourceHandle: 'right', targetHandle: 'left', appearsAt: 2, color: 'var(--accent-amber)' },
+  { id: 'ev3-a', source: 'V3', target: 'API', sourceHandle: 'right', targetHandle: 'left', appearsAt: 2, color: 'var(--accent-amber)' },
+  
+  // Step 3: Gateways to Pod
+  { id: 'ew-p', source: 'WAF', target: 'POD', sourceHandle: 'right', targetHandle: 'left', appearsAt: 3, label: 'bypass & exploit', color: 'var(--accent-indigo)' },
+  { id: 'er-p', source: 'REG', target: 'POD', sourceHandle: 'right', targetHandle: 'left', appearsAt: 3, label: 'pull malicious image', color: 'var(--accent-indigo)' },
+  { id: 'ea-p', source: 'API', target: 'POD', sourceHandle: 'right', targetHandle: 'left', appearsAt: 3, label: 'stolen token', color: 'var(--accent-indigo)' },
+  
+  // Step 4: Pod to Post Exploitation
+  { id: 'ep-po', source: 'POD', target: 'POST', sourceHandle: 'right', targetHandle: 'left', appearsAt: 4, label: 'post-exploit', color: 'var(--accent-pink)' },
+  
+  // Step 5: Pod to Host Node Escape
+  { id: 'ep-n', source: 'POD', target: 'NODE', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 5, label: 'escape', color: 'var(--accent-rose)' },
+];
+
 // --- Walkthrough Database ---
-const walkthroughData: Record<'tab1' | 'tab2', Record<number, {
+const walkthroughData: Record<'tab1' | 'tab2' | 'tab3', Record<number, {
   title: string;
   stageTag: string;
   description: string;
@@ -443,7 +691,7 @@ const walkthroughData: Record<'tab1' | 'tab2', Record<number, {
     3: {
       title: 'Active Protection',
       stageTag: 'TELEMETRY STREAM OPEN',
-      description: 'Handshake completed. The agent is actively communicating with the manager. Bidirectional heartbeat pulses and telemetry updates are exchanged within a strict 10-second window, ensuring the host is secure.',
+      description: 'Handshake completed. The agent is actively communicating with the manager. Bidirectional heartbeat pulses and telemetry updates are exchanged regularly, ensuring the host is secure.',
       technicalDetails: 'Establishes a persistent TCP pipeline. Heartbeat packets check policy versions. Telemetry queues stream processes and file integrity records smoothly.',
       technologies: ['Heartbeat Pulses', 'TCP Sockets', 'Policy Enforcement'],
       icon: <IconActive />,
@@ -485,7 +733,7 @@ const walkthroughData: Record<'tab1' | 'tab2', Record<number, {
     3: {
       title: 'Central Event Buffer',
       stageTag: 'ENCRYPTED DISK STORAGE',
-      description: ' telemetry events are compiled in a high-speed memory cache. In case the host goes offline, the daemon automatically spools telemetry into encrypted local disk queues, preventing data loss.',
+      description: 'Raw telemetry events are compiled in a central high-speed memory cache. In case the host goes offline, the daemon automatically spools telemetry into encrypted local disk queues, preventing data loss.',
       technicalDetails: 'Utilizes high-throughput ring buffers to capture events under spike loads. Encryption protects the cached files from local host tampering by sophisticated malware.',
       technologies: ['Memory-Mapped Ring Buffer', 'Encrypted Disk Spool', 'Tamper-Proof Storage'],
       icon: <IconBuffer />,
@@ -495,16 +743,58 @@ const walkthroughData: Record<'tab1' | 'tab2', Record<number, {
       stageTag: 'PARSING & CORRELATION',
       description: 'Telemetry is parsed into uniform schemas, enriched with key system metadata (such as parent process trees and active user sessions), and evaluated against local behavioral detection rules.',
       technicalDetails: 'Extracts hash values and tracks parent-child process lineage trees. Local heuristic rules trigger immediate local network containment if active malware signatures resolve.',
-      technologies: ['JSON Schema Mapper', 'Process Lineage Engine', 'Local Threat Rules'],
+      technologies: ['JSON Schema Mapper', 'Process Lineage Engine', 'Local Threat Heuristics'],
       icon: <IconEngine />,
     },
     5: {
       title: 'Secure Cloud Ingestion',
-      stageTag: 'SaaS CENTRAL SAAS CONTROL',
+      stageTag: 'CENTRAL SAAS CONTROL',
       description: 'The local shipping module packages enriched telemetry and streams it over secure mutual TLS to the Cloud EDR Manager. Large-scale behavioral analytics, indexing, and incident responses are coordinated here.',
       technicalDetails: 'Employs certificate pinning and HTTP/2 compression. Ingested events map instantly to MITRE ATT&CK techniques, generating security operations alerts.',
       technologies: ['mTLS Stream (TLS 1.3)', 'Cloud Ingest Gateway', 'MITRE ATT&CK Matrix'],
       icon: <IconManager />,
+    },
+  },
+  tab3: {
+    1: {
+      title: 'Attacker Inception',
+      stageTag: 'THREAT RECONNAISSANCE',
+      description: 'A remote threat actor stages parallel attack vectors against the cloud infrastructure: targeting software input filters, injecting backdoors in dependencies, or harvesting static administration tokens.',
+      technicalDetails: 'Attacker launches vulnerability scans, queries public code repositories, and sniffs network configuration exposures to outline target cluster resources.',
+      technologies: ['Port Scanners', 'OWASP Top 10 Probes', 'Dependency Sweepers'],
+      icon: <IconAttacker />,
+    },
+    2: {
+      title: 'Perimeter Exploitation',
+      stageTag: 'GATEWAY INTRUSION',
+      description: 'Exploits traverse active perimeters: evading web application firewalls, hosting backdoored images in compromised registries, or accessing control plane APIs with valid credentials.',
+      technicalDetails: 'Attacker uses evasion vectors (like base64 query payloads) to bypass rule signatures, and registers service keys with target endpoint portals.',
+      technologies: ['WAF Rule Evasion', 'Stolen Credentials', 'Docker Push API'],
+      icon: <IconCredentials />,
+    },
+    3: {
+      title: 'Targeted Pod Compromise',
+      stageTag: 'CONTAINER COMPROMISE',
+      description: 'Breaches converge on the cloud workload. Compromised configurations or payload exploits succeed in spawning a shell process inside a sandboxed container, compromising the Pod.',
+      technicalDetails: 'Payload launches standard webshell execution threads. Exploit establishes active socket leases directly within the restricted Kubernetes namespace boundaries.',
+      technologies: ['Workload Sandbox', 'RCE Shell Spawn', 'Namespace Intrusion'],
+      icon: <IconPod />,
+    },
+    4: {
+      title: 'C2 Tunnels & Cryptomining',
+      stageTag: 'POST-EXPLOITATION',
+      description: 'Adversary leverages container control: establishing reverse command and control (C2) channels, staging sensitive database file exports, and running active mining operations.',
+      technicalDetails: 'Malware connects outbound sockets to public IP C2 proxies, deploys automated background mining processes, and executes rootkit installation sequences.',
+      technologies: ['Reverse Shell Sockets', 'C2 Tunneling Proxies', 'Monero Cryptomining'],
+      icon: <IconPostExploit />,
+    },
+    5: {
+      title: 'Host Node Escape Breakout',
+      stageTag: 'LATERAL ESCAPE',
+      description: 'Exploiting shared system namespaces, kernel system calls, or local host directory mounts, the attacker breaks container virtualization boundaries and gains full administrative root access onto the physical Host Node.',
+      technicalDetails: 'Executes container breakout vectors (e.g., abusing privileged containers, mounting host paths, or exploitation of local CVE kernel vulnerabilities) to compromise the root node VM.',
+      technologies: ['Privileged Sandbox Break', 'Host Mount Abuse', 'Kernel Privilege Escalation'],
+      icon: <IconHostNode />,
     },
   },
 };
@@ -516,12 +806,13 @@ const MAX_STEPS = 5;
 // ==========================================
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2'>('tab1');
+  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2' | 'tab3'>('tab1');
   const [tab1Step, setTab1Step] = useState(1);
   const [tab2Step, setTab2Step] = useState(1);
+  const [tab3Step, setTab3Step] = useState(1);
 
   // Active step depending on the tab
-  const activeStep = activeTab === 'tab1' ? tab1Step : tab2Step;
+  const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : tab3Step;
 
   // ReactFlow Nodes Creation
   const nodes = useMemo(() => {
@@ -544,7 +835,7 @@ function App() {
           pointerEvents: tab1Step >= node.appearsAt ? 'auto' : 'none',
         },
       }));
-    } else {
+    } else if (activeTab === 'tab2') {
       return tab2NodesRaw.map((node) => ({
         id: node.id,
         type: 'custom',
@@ -563,8 +854,30 @@ function App() {
           pointerEvents: tab2Step >= node.appearsAt ? 'auto' : 'none',
         },
       }));
+    } else {
+      return tab3NodesRaw.map((node) => ({
+        id: node.id,
+        type: node.type || 'custom',
+        position: { x: node.x, y: node.y },
+        parentNode: node.parentNode,
+        extent: node.extent,
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: node.type === 'k8s-cluster' ? node.width : 250,
+          height: node.type === 'k8s-cluster' ? node.height : undefined,
+          opacity: tab3Step >= node.appearsAt ? 1 : 0,
+          transition: 'opacity 0.5s ease-in-out',
+          pointerEvents: tab3Step >= node.appearsAt ? 'auto' : 'none',
+        },
+      }));
     }
-  }, [activeTab, tab1Step, tab2Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step]);
 
   // ReactFlow Edges Creation
   const edges = useMemo(() => {
@@ -591,7 +904,7 @@ function App() {
           },
         };
       });
-    } else {
+    } else if (activeTab === 'tab2') {
       return tab2EdgesRaw.map((edge) => {
         const isVisible = tab2Step >= edge.appearsAt;
         return {
@@ -614,37 +927,64 @@ function App() {
           },
         };
       });
+    } else {
+      return tab3EdgesRaw.map((edge) => {
+        const isVisible = tab3Step >= edge.appearsAt;
+        return {
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+            transition: 'opacity 0.4s ease',
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
     }
-  }, [activeTab, tab1Step, tab2Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step]);
 
   // --- Step Controls ---
   const handleNext = useCallback(() => {
     if (activeTab === 'tab1') {
       if (tab1Step < MAX_STEPS) setTab1Step((s) => s + 1);
-    } else {
+    } else if (activeTab === 'tab2') {
       if (tab2Step < MAX_STEPS) setTab2Step((s) => s + 1);
+    } else {
+      if (tab3Step < MAX_STEPS) setTab3Step((s) => s + 1);
     }
-  }, [activeTab, tab1Step, tab2Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step]);
 
   const handlePrev = useCallback(() => {
     if (activeTab === 'tab1') {
       if (tab1Step > 1) setTab1Step((s) => s - 1);
-    } else {
+    } else if (activeTab === 'tab2') {
       if (tab2Step > 1) setTab2Step((s) => s - 1);
+    } else {
+      if (tab3Step > 1) setTab3Step((s) => s - 1);
     }
-  }, [activeTab, tab1Step, tab2Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step]);
 
   const handleReset = useCallback(() => {
     if (activeTab === 'tab1') {
       setTab1Step(1);
-    } else {
+    } else if (activeTab === 'tab2') {
       setTab2Step(1);
+    } else {
+      setTab3Step(1);
     }
   }, [activeTab]);
 
-
-
-  const handleTabChange = useCallback((tab: 'tab1' | 'tab2') => {
+  const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3') => {
     setActiveTab(tab);
   }, []);
 
@@ -685,6 +1025,12 @@ function App() {
             className={`tab-btn ${activeTab === 'tab2' ? 'active' : ''}`}
           >
             <IconSource /> Log Collector Dataflow
+          </button>
+          <button 
+            onClick={() => handleTabChange('tab3')} 
+            className={`tab-btn ${activeTab === 'tab3' ? 'active' : ''}`}
+          >
+            <IconAttacker /> K8s Attack Vectors
           </button>
         </nav>
       </header>
@@ -730,7 +1076,6 @@ function App() {
               <button onClick={handleReset} className="reset-btn">
                 Reset Flow
               </button>
-
             </div>
 
             {/* Futuristic Stepper Progress Indicators */}
@@ -764,7 +1109,7 @@ function App() {
 
           <div className="walkthrough-body">
             <div className="walkthrough-title-section">
-              <div className="walkthrough-icon-container" style={{ color: activeTab === 'tab1' ? 'var(--accent-indigo)' : 'var(--accent-cyan)' }}>
+              <div className="walkthrough-icon-container" style={{ color: activeTab === 'tab1' ? 'var(--accent-indigo)' : activeTab === 'tab2' ? 'var(--accent-cyan)' : 'var(--accent-rose)' }}>
                 {activeWalkthrough.icon}
               </div>
               <div>

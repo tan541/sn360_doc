@@ -6,9 +6,10 @@ This is a React-based interactive dashboard built to visualize Endpoint Detectio
 
 ## 🌟 Visual & Interactive Features
 
-### 1. Interactive Dual-Tab Dashboard
+### 1. Interactive Triple-Tab Dashboard
 *   **Tab 1: Endpoint Agent State**: Follows the lifecycle of the host agent from initial registration to keepalive heartbeat communication, disconnect timeouts, and self-healing network restore transitions.
 *   **Tab 2: Log Collector Modules Dataflow**: Demonstrates the telemetry pipelines. Tracks how raw host activities (Processes, File systems, Network sockets, Registry configurations) are captured at kernel levels, sorted by demultiplexing daemon threads, consolidated in event buffers, scanned by threat heuristics, and streamed securely to Cloud SIEM consoles.
+*   **Tab 3: Attack Vectors on Kubernetes**: Details cloud cluster vulnerabilities. Traces RCE injections traversing WAF protections, backdoored container image pulls, and credential theft at control planes—all converging inside a compromised container pod, before demonstrating post-exploitation reverse shells and lateral breakouts onto virtual Host Nodes.
 
 ### 2. Detailed Technical Walkthrough Sidebar
 As you progress through each step, the walkthrough sidebar updates automatically, delivering:
