@@ -1,28 +1,59 @@
-# EDR Workflow Flow Chart
+# EDR Workflow & Telemetry Ingestion Visualizer
 
-This is a React-based interactive flow chart demonstrating the state transitions of an Endpoint Agent. 
-It uses Vite and ReactFlow to provide a smooth, step-by-step interactive demonstration.
+This is a React-based interactive dashboard built to visualize Endpoint Detection and Response (EDR) workflows. It features a premium, responsive cybersecurity dashboard layout utilizing ReactFlow, detailed walkthrough guides, and real-time animated flow vectors.
 
-## Requirements
-- Node.js version 20 or higher.
+---
 
-## Getting Started
+## 🌟 Visual & Interactive Features
+
+### 1. Interactive Dual-Tab Dashboard
+*   **Tab 1: Endpoint Agent State**: Follows the lifecycle of the host agent from initial registration to keepalive heartbeat communication, disconnect timeouts, and self-healing network restore transitions.
+*   **Tab 2: Log Collector Modules Dataflow**: Demonstrates the telemetry pipelines. Tracks how raw host activities (Processes, File systems, Network sockets, Registry configurations) are captured at kernel levels, sorted by demultiplexing daemon threads, consolidated in event buffers, scanned by threat heuristics, and streamed securely to Cloud SIEM consoles.
+
+### 2. Detailed Technical Walkthrough Sidebar
+As you progress through each step, the walkthrough sidebar updates automatically, delivering:
+*   **Functional Stage Summaries**: High-level explanation of the current phase.
+*   **Under the Hood (Telemetry Mechanics)**: Deep-dive operational details (e.g. eBPF hooking, memory-mapped spools, client certificate pinning).
+*   **Technology Pillars**: Visual indicator pills tracking specific frameworks (e.g., eBPF, TLS 1.3, mTLS, MITRE ATT&CK mapping).
+
+### 3. Cyber Dark Aesthetics
+*   **Glassmorphism**: Translucent nav tabs and details modules leveraging CSS blur filters.
+*   **Active Stream Vectors**: High-voltage, glowing dashed connection streams that flow continuously using keyframe offset animations.
+*   **Status Indicators**: Node panels styled dynamically with designated security status glows (emerald for active, amber for pending, rose for disconnected, fuchsia for threat logic).
+
+### 4. Progress Stepper Controls
+*   **Navigation Controls**: Bottom panel housing Next Step, Previous Step, and Reset Flow buttons that act seamlessly upon the active workspace.
+*   **Step dot Stepper**: Sleek LED-style dot array tracking your current progress phase dynamically.
+
+---
+
+## 🛠️ Requirements
+
+*   **Node.js**: Version 20 or higher.
+*   **NPM**: Version 10 or higher.
+
+---
+
+## 🚀 Getting Started
 
 ### 1. Install Dependencies
+Initialize dependencies and install ReactFlow libraries:
 ```bash
 npm install
 ```
 
-### 2. Run the App
+### 2. Run the Development Server
+Launch the local Vite server:
 ```bash
 npm run dev
 ```
-This will start a local development server. Open the URL provided in the terminal (usually `http://localhost:5173/`).
+Open the local URL displayed in the terminal (default: `http://localhost:5173/`).
 
 ### 3. Stop the App
-In the terminal where the app is running, press `Ctrl + C` to stop the server.
+To terminate the local dev server, press `Ctrl + C` in your terminal shell.
 
-## Features
-- **Next**: Reveals the next node and edge in the flow.
-- **Previous**: Hides the most recently revealed node and edge.
-- **Reset**: Resets the visualization to show only the first node.
+### 4. Create Production Build
+Build a fully optimized static distribution folder:
+```bash
+npm run build
+```

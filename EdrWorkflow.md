@@ -33,7 +33,9 @@ There are 4 stages and 1 restore transition:
 If the enviroment scaffolds a similar TypeScript setup that supports ReactFlow quickly, use that instead.
 
 ## User Interface (UI)
-- Single page layout.
+- Single page layout with multiple tabs.
+    - Tab 1 for Endpoint Agent State
+    - Tab 2 for dataflow for log collector modules
 - Each state is a node
 - Appear one after another
 
