@@ -8,10 +8,11 @@ This is a React-based interactive dashboard built to visualize Endpoint Detectio
 
 ## 🌟 Visual & Interactive Features
 
-### 1. Interactive Triple-Tab Dashboard
+### 1. Interactive Quad-Tab Dashboard
 *   **Tab 1: Endpoint Agent State**: Follows the lifecycle of the host agent from initial registration to keepalive heartbeat communication, disconnect timeouts, and self-healing network restore transitions.
 *   **Tab 2: Log Collector Modules Dataflow**: Demonstrates the telemetry pipelines. Tracks how raw host activities (Processes, File systems, Network sockets, Registry configurations) are captured at kernel levels, sorted by demultiplexing daemon threads, consolidated in event buffers, scanned by threat heuristics, and streamed securely to Cloud SIEM consoles.
 *   **Tab 3: Attack Vectors on Kubernetes**: Details cloud cluster vulnerabilities. Traces RCE injections traversing WAF protections, backdoored container image pulls, and credential theft at control planes—all converging inside a compromised container pod, before demonstrating post-exploitation reverse shells and lateral breakouts onto virtual Host Nodes.
+*   **Tab 4: Architecture & PRDs**: Maps the complete security stack architecture. Serves as an interactive grid flowchart grouping EDR modules by target OS columns (Linux, macOS, Windows) and functional layers (Early Launch, File Monitoring, Network Filtering, Static Scanner, OCSF Log Collector). Nodes are fully clickable to dynamically open, parse, and read the requirements PRD files directly in a premium dark-themed Markdown Reader sidebar.
 
 ### 2. Detailed Technical Walkthrough Sidebar
 As you progress through each step, the walkthrough sidebar updates automatically, delivering:
@@ -63,7 +64,7 @@ npm run build
 
 ### 5. Exporting Slideshow PDF
 To generate a vector-perfect, 5-page PDF report of any active tab:
-1. Select the target tab at the top of the interface (Endpoint State, Log Collector, or K8s Vectors).
+1. Select the target tab at the top of the interface (Endpoint State, Log Collector, K8s Vectors, or Architecture & PRDs).
 2. Click the red **Export PDF** button in the bottom controls bar (or press `Cmd + P` / `Ctrl + P`).
 3. In the browser print dialog:
    - **Destination**: Save as PDF

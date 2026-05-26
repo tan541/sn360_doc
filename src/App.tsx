@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import ReactFlow, {
   Controls,
   Background,
@@ -188,11 +188,17 @@ const IconPostExploit = () => (
   </svg>
 );
 
-// ==========================================
-// 2. Custom Node Components
-// ==========================================
+interface CustomNodeProps {
+  data: {
+    badge?: string;
+    title?: string;
+    description?: string;
+    glow?: string;
+    icon?: React.ReactNode;
+  };
+}
 
-const CustomNodeComponent = ({ data }: any) => {
+const CustomNodeComponent = ({ data }: CustomNodeProps) => {
   return (
     <>
       {/* Standard vertical handles for Tab 1 */}
@@ -673,7 +679,7 @@ const tab3EdgesRaw: EdgeConfig[] = [
 ];
 
 // --- Walkthrough Database ---
-const walkthroughData: Record<'tab1' | 'tab2' | 'tab3', Record<number, {
+const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4', Record<number, {
   title: string;
   stageTag: string;
   description: string;
@@ -807,6 +813,309 @@ const walkthroughData: Record<'tab1' | 'tab2' | 'tab3', Record<number, {
       icon: <IconHostNode />,
     },
   },
+  tab4: {
+    1: {
+      title: 'Layer 1: OCSF Telemetry Log Collector',
+      stageTag: 'STANDARDIZED TELEMETRY STREAM',
+      description: 'Collects, normalizes, and groups all low-level telemetry records into standardized Open Cybersecurity Schema Framework (OCSF) JSON structures.',
+      technicalDetails: 'Standardizes disparate kernel signals to OCSF events, buffering and cryptographically signing batches before streaming over persistent mutual TLS to SaaS managers.',
+      technologies: ['OCSF 1.7.0', 'mTLS Stream', 'Telemetry Enforcer'],
+      icon: <IconNeverConnected />,
+    },
+    2: {
+      title: 'Layer 2: Network Connection & Socket Filtering',
+      stageTag: 'NETWORK PERIMETER CONTROL',
+      description: 'Monitors, intercepts, and controls outbound sockets, remote port bounds, TCP/UDP streams, and DNS queries staged by process executors.',
+      technicalDetails: 'Uses Network Filter extensions on macOS, Windows Filtering Platform (WFP) on Windows, and eBPF socket classifiers/cgroups on Linux.',
+      technologies: ['cgroups socket', 'WFP drivers', 'macOS Network Filters'],
+      icon: <IconNeverConnected />,
+    },
+    3: {
+      title: 'Layer 3: File System Integrity & Monitoring',
+      stageTag: 'FILESYSTEM FILTER DRIVERS',
+      description: 'Tracks and regulates real-time read, write, execution, deletion, and directory modification events across physical and virtual disk systems.',
+      technicalDetails: 'Employs eBPF kprobes and tracepoints on Linux, File System Minifilters on Windows, and Endpoint Security Framework (ESF) file hooks on macOS.',
+      technologies: ['eBPF Kprobes', 'Minifilters', 'macOS ESF'],
+      icon: <IconNeverConnected />,
+    },
+    4: {
+      title: 'Layer 4: Static Signature Scanner',
+      stageTag: 'BINARY INTEGRITY CHECK',
+      description: 'Performs on-demand or execution-time static parsing and entropy reviews of executable files to detect known signatures or suspicious packaging.',
+      technicalDetails: 'Runs high-throughput hash lookups against local signature trees and extracts structural properties (PE/ELF headers) inside highly sandboxed user-space scanners.',
+      technologies: ['YARA signatures', 'PE/ELF Parser', 'Entropy Scan'],
+      icon: <IconNeverConnected />,
+    },
+    5: {
+      title: 'Layer 5: Early Launch Security (ELAM)',
+      stageTag: 'KERNEL BOUNDARY SECURITY',
+      description: 'The foundation of the EDR architecture. Ensures that security hooks and policies are loaded at the earliest boot sequence before any user-space system services or potential malware initiate.',
+      technicalDetails: 'Integrated within initramfs on Linux (using early BPF LSM loading) and ELAM system driver registries on Windows to validate early boot path signatures.',
+      technologies: ['BPF LSM', 'initramfs loader', 'ELAM Drivers'],
+      icon: <IconNeverConnected />,
+    },
+  },
+};
+
+// ==========================================
+// 3.5 Tab 4 Definitions & Markdown Renderer
+// ==========================================
+
+// Dynamically load the PRD markdown files from /prds
+const prdFiles = import.meta.glob('../prds/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+
+// Helper to parse filename metadata
+const parsePrdFile = (key: string, content: string) => {
+  const filename = key.split('/').pop() || '';
+  let platform: 'linux' | 'macos' | 'windows' | 'global' = 'global';
+  if (filename.startsWith('Linux_')) platform = 'linux';
+  else if (filename.startsWith('macOS_')) platform = 'macos';
+  else if (filename.startsWith('Windows_')) platform = 'windows';
+
+  let layer = 1;
+  let badge = 'PRD INDEX';
+  let title: string;
+  let glow = 'var(--accent-cyan)';
+
+  if (filename === 'README.md') {
+    layer = 1;
+    badge = 'OVERVIEW';
+    title = 'EDR System PRDs';
+    glow = 'var(--accent-amber)';
+  } else if (filename.includes('OCSF')) {
+    layer = 1;
+    badge = 'LOG COLLECTOR';
+    title = platform === 'linux' 
+      ? 'Linux OCSF Log Collector' 
+      : platform === 'macos' 
+        ? 'macOS OCSF Log Collector' 
+        : 'Windows OCSF Log Collector';
+    glow = 'var(--accent-emerald)';
+  } else if (filename.includes('Network')) {
+    layer = 2;
+    badge = 'NET FIREWALL';
+    title = platform === 'linux' 
+      ? 'Linux Network Filtering' 
+      : platform === 'macos' 
+        ? 'macOS Network Filtering' 
+        : 'Windows Network Filtering';
+    glow = 'var(--accent-rose)';
+  } else if (filename.includes('File') || filename.includes('eBPF') || filename.includes('ES') || filename.includes('Minifilter')) {
+    layer = 3;
+    badge = 'FILE SECURITY';
+    title = platform === 'linux' 
+      ? 'Linux eBPF File Mon' 
+      : platform === 'macos' 
+        ? 'macOS ES File Mon' 
+        : 'Windows Minifilter Mon';
+    glow = 'var(--accent-indigo)';
+  } else if (filename.includes('Static')) {
+    layer = 4;
+    badge = 'STATIC SCANNER';
+    title = platform === 'linux' 
+      ? 'Linux Static Scanner' 
+      : platform === 'macos' 
+        ? 'macOS Static Scanner' 
+        : 'Windows Static Scanner';
+    glow = 'var(--accent-violet)';
+  } else if (filename.includes('ELAM')) {
+    layer = 5;
+    badge = 'EARLY LAUNCH';
+    title = platform === 'linux' ? 'Linux LSM / ELAM PRD' : 'macOS ELAM PRD';
+    glow = 'var(--accent-cyan)';
+  } else {
+    title = filename.replace(/_/g, ' ').replace('.md', '');
+  }
+
+  return {
+    id: key,
+    filename,
+    platform,
+    layer,
+    badge,
+    title,
+    glow,
+    content
+  };
+};
+
+const parsedPrds = Object.entries(prdFiles).map(([key, content]) => {
+  return parsePrdFile(key, content);
+});
+
+// Dynamic grid coordinate assignment for columns and layers
+const getPrdCoordinates = (platform: string, layer: number) => {
+  if (platform === 'global') {
+    return { x: 380, y: -100 };
+  }
+  
+  let x = 380;
+  if (platform === 'linux') x = 50;
+  else if (platform === 'macos') x = 380;
+  else if (platform === 'windows') x = 710;
+
+  const y = 50 + (layer - 1) * 150;
+  return { x, y };
+};
+
+// Edge routing definitions
+const tab4EdgesRaw: EdgeConfig[] = [
+  // Global entries from README to first layer (OCSF Collector)
+  { id: 'e-global-linux', source: '../prds/README.md', target: '../prds/Linux_OCSF_Log_Collector_PRD.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 1, color: 'var(--accent-emerald)' },
+  { id: 'e-global-macos', source: '../prds/README.md', target: '../prds/macOS_OCSF_Log_Collector_PRD.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 1, color: 'var(--accent-emerald)' },
+  { id: 'e-global-windows', source: '../prds/README.md', target: '../prds/Windows_OCSF_Log_Collector_PRD.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 1, color: 'var(--accent-emerald)' },
+
+  // Linux column sequence: OCSF -> Net -> File -> Static -> ELAM
+  { id: 'e-linux-1-2', source: '../prds/Linux_OCSF_Log_Collector_PRD.md', target: '../prds/Linux_Network_Filtering_PRD.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 2, color: 'var(--accent-rose)' },
+  { id: 'e-linux-2-3', source: '../prds/Linux_Network_Filtering_PRD.md', target: '../prds/Linux_eBPF_File_Monitoring_Module.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 3, color: 'var(--accent-indigo)' },
+  { id: 'e-linux-3-4', source: '../prds/Linux_eBPF_File_Monitoring_Module.md', target: '../prds/Linux_Static_Scanner_PRD.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 4, color: 'var(--accent-violet)' },
+  { id: 'e-linux-4-5', source: '../prds/Linux_Static_Scanner_PRD.md', target: '../prds/Linux_ELAM_Equivalent_PRD.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 5, color: 'var(--accent-cyan)' },
+
+  // macOS column sequence: OCSF -> Net -> File -> Static -> ELAM
+  { id: 'e-macos-1-2', source: '../prds/macOS_OCSF_Log_Collector_PRD.md', target: '../prds/macOS_Network_Filtering_PRD.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 2, color: 'var(--accent-rose)' },
+  { id: 'e-macos-2-3', source: '../prds/macOS_Network_Filtering_PRD.md', target: '../prds/macOS_ES_File_Monitoring_Module.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 3, color: 'var(--accent-indigo)' },
+  { id: 'e-macos-3-4', source: '../prds/macOS_ES_File_Monitoring_Module.md', target: '../prds/macOS_Static_Scanner_PRD.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 4, color: 'var(--accent-violet)' },
+  { id: 'e-macos-4-5', source: '../prds/macOS_Static_Scanner_PRD.md', target: '../prds/macOS_ELAM_Equivalent_PRD.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 5, color: 'var(--accent-cyan)' },
+
+  // Windows column sequence: OCSF -> Net -> File (Minifilter) -> Static
+  { id: 'e-windows-1-2', source: '../prds/Windows_OCSF_Log_Collector_PRD.md', target: '../prds/Windows_Network_Filtering_PRD.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 2, color: 'var(--accent-rose)' },
+  { id: 'e-windows-2-3', source: '../prds/Windows_Network_Filtering_PRD.md', target: '../prds/Windows_Minifilter_Monitoring_Module.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 3, color: 'var(--accent-indigo)' },
+  { id: 'e-windows-3-4', source: '../prds/Windows_Minifilter_Monitoring_Module.md', target: '../prds/Windows_Static_Scanner_PRD.md', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 4, color: 'var(--accent-violet)' },
+];
+
+// Custom Regex-based markdown parser
+const renderMarkdown = (text: string) => {
+  if (!text) return null;
+  const lines = text.split('\n');
+  const renderedElements: React.ReactNode[] = [];
+  
+  let inList = false;
+  let listItems: React.ReactNode[] = [];
+  
+  let inTable = false;
+  let tableHeaders: string[] = [];
+  let tableRows: string[][] = [];
+
+  const parseInline = (line: string) => {
+    let temp = line;
+    temp = temp.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    temp = temp.replace(/`(.*?)`/g, '<code>$1</code>');
+    return <span dangerouslySetInnerHTML={{ __html: temp }} />;
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    
+    if (line.startsWith('|')) {
+      if (inList) {
+        renderedElements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+        inList = false;
+        listItems = [];
+      }
+      
+      inTable = true;
+      if (line.includes('---')) {
+        continue;
+      }
+      
+      const cells = line.split('|').map(c => c.trim()).filter((_, idx, arr) => idx > 0 && idx < arr.length - 1);
+      if (tableHeaders.length === 0) {
+        tableHeaders = cells;
+      } else {
+        tableRows.push(cells);
+      }
+      continue;
+    } else {
+      if (inTable) {
+        renderedElements.push(
+          <div key={`table-wrapper-${i}`} className="table-responsive" style={{ overflowX: 'auto', width: '100%' }}>
+            <table key={`table-${i}`}>
+              <thead>
+                <tr>
+                  {tableHeaders.map((h, idx) => <th key={idx}>{parseInline(h)}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {tableRows.map((row, rIdx) => (
+                  <tr key={rIdx}>
+                    {row.map((cell, cIdx) => <td key={cIdx}>{parseInline(cell)}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        inTable = false;
+        tableHeaders = [];
+        tableRows = [];
+      }
+    }
+
+    if (line.startsWith('* ') || line.startsWith('- ')) {
+      inList = true;
+      listItems.push(<li key={`li-${i}`}>{parseInline(line.substring(2))}</li>);
+      continue;
+    } else if (line.match(/^\d+\.\s/)) {
+      inList = true;
+      const match = line.match(/^\d+\.\s(.*)/);
+      listItems.push(<li key={`li-${i}`}>{parseInline(match ? match[1] : line)}</li>);
+      continue;
+    } else {
+      if (inList) {
+        renderedElements.push(<ul key={`list-${i}`}>{listItems}</ul>);
+        inList = false;
+        listItems = [];
+      }
+    }
+
+    if (line === '') {
+      continue;
+    }
+
+    if (line.startsWith('# ')) {
+      renderedElements.push(<h1 key={i}>{parseInline(line.substring(2))}</h1>);
+    } else if (line.startsWith('## ')) {
+      renderedElements.push(<h2 key={i}>{parseInline(line.substring(3))}</h2>);
+    } else if (line.startsWith('### ')) {
+      renderedElements.push(<h3 key={i}>{parseInline(line.substring(4))}</h3>);
+    } else if (line.startsWith('> ')) {
+      renderedElements.push(
+        <blockquote key={i}>
+          <p>{parseInline(line.substring(2))}</p>
+        </blockquote>
+      );
+    } else if (line.startsWith('---')) {
+      renderedElements.push(<hr key={i} />);
+    } else {
+      renderedElements.push(<p key={i}>{parseInline(line)}</p>);
+    }
+  }
+
+  if (inList) {
+    renderedElements.push(<ul key={`list-end`}>{listItems}</ul>);
+  }
+  if (inTable) {
+    renderedElements.push(
+      <div key={`table-wrapper-end`} className="table-responsive" style={{ overflowX: 'auto', width: '100%' }}>
+        <table>
+          <thead>
+            <tr>
+              {tableHeaders.map((h, idx) => <th key={idx}>{parseInline(h)}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {tableRows.map((row, rIdx) => (
+              <tr key={rIdx}>
+                {row.map((cell, cIdx) => <td key={cIdx}>{parseInline(cell)}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  return <div className="markdown-content">{renderedElements}</div>;
 };
 
 const MAX_STEPS = 5;
@@ -816,13 +1125,44 @@ const MAX_STEPS = 5;
 // ==========================================
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2' | 'tab3'>('tab1');
+  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2' | 'tab3' | 'tab4'>('tab1');
   const [tab1Step, setTab1Step] = useState(1);
   const [tab2Step, setTab2Step] = useState(1);
   const [tab3Step, setTab3Step] = useState(1);
+  const [tab4Step, setTab4Step] = useState(1);
+  const [selectedPrdId, setSelectedPrdId] = useState<string>('../prds/README.md');
+  const [sidebarWidth, setSidebarWidth] = useState(380);
+  const [isResizing, setIsResizing] = useState(false);
+
+  const startResizing = useCallback((mouseDownEvent: React.MouseEvent) => {
+    mouseDownEvent.preventDefault();
+    setIsResizing(true);
+  }, []);
+
+  const stopResizing = useCallback(() => {
+    setIsResizing(false);
+  }, []);
+
+  const resize = useCallback((mouseMoveEvent: MouseEvent) => {
+    if (isResizing) {
+      const newWidth = window.innerWidth - mouseMoveEvent.clientX;
+      if (newWidth > 280 && newWidth < 800) {
+        setSidebarWidth(newWidth);
+      }
+    }
+  }, [isResizing]);
+
+  useEffect(() => {
+    window.addEventListener('mousemove', resize);
+    window.addEventListener('mouseup', stopResizing);
+    return () => {
+      window.removeEventListener('mousemove', resize);
+      window.removeEventListener('mouseup', stopResizing);
+    };
+  }, [resize, stopResizing]);
 
   // Active step depending on the tab
-  const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : tab3Step;
+  const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : activeTab === 'tab3' ? tab3Step : tab4Step;
 
   // ReactFlow Nodes Creation (interactive dashboard view)
   const nodes = useMemo(() => {
@@ -864,7 +1204,7 @@ function App() {
           pointerEvents: tab2Step >= node.appearsAt ? 'auto' : 'none',
         },
       }));
-    } else {
+    } else if (activeTab === 'tab3') {
       return tab3NodesRaw.map((node) => ({
         id: node.id,
         type: node.type || 'custom',
@@ -886,8 +1226,39 @@ function App() {
           pointerEvents: tab3Step >= node.appearsAt ? 'auto' : 'none',
         },
       }));
+    } else {
+      return parsedPrds.map((prd) => {
+        const coords = getPrdCoordinates(prd.platform, prd.layer);
+        const isActive = prd.id === selectedPrdId;
+        
+        return {
+          id: prd.id,
+          type: 'custom',
+          position: coords,
+          data: {
+            badge: prd.badge,
+            title: prd.title,
+            description: `Requirements PRD file: ${prd.filename}`,
+            glow: prd.glow,
+            icon: prd.platform === 'linux' 
+              ? <IconSource /> 
+              : prd.platform === 'macos' 
+                ? <IconActive /> 
+                : prd.platform === 'windows' 
+                  ? <IconNeverConnected /> 
+                  : <IconManager />,
+          },
+          style: {
+            width: 260,
+            opacity: tab4Step >= prd.layer ? 1 : 0,
+            transition: 'opacity 0.5s ease-in-out, border-color 0.3s ease, box-shadow 0.3s ease',
+            pointerEvents: tab4Step >= prd.layer ? 'auto' : 'none',
+          },
+          className: isActive ? 'prd-active-node' : '',
+        };
+      });
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, selectedPrdId]);
 
   // ReactFlow Edges Creation (interactive dashboard view)
   const edges = useMemo(() => {
@@ -937,7 +1308,7 @@ function App() {
           },
         };
       });
-    } else {
+    } else if (activeTab === 'tab3') {
       return tab3EdgesRaw.map((edge) => {
         const isVisible = tab3Step >= edge.appearsAt;
         return {
@@ -960,8 +1331,31 @@ function App() {
           },
         };
       });
+    } else {
+      return tab4EdgesRaw.map((edge) => {
+        const isVisible = tab4Step >= edge.appearsAt;
+        return {
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+            transition: 'opacity 0.4s ease',
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step]);
 
   // Helpers to get specific state parameters per page when generating print files
   const getNodesForStep = useCallback((step: number) => {
@@ -999,7 +1393,7 @@ function App() {
           opacity: step >= node.appearsAt ? 1 : 0,
         },
       }));
-    } else {
+    } else if (activeTab === 'tab3') {
       return tab3NodesRaw.map((node) => ({
         id: node.id,
         type: node.type || 'custom',
@@ -1019,6 +1413,32 @@ function App() {
           opacity: step >= node.appearsAt ? 1 : 0,
         },
       }));
+    } else {
+      return parsedPrds.map((prd) => {
+        const coords = getPrdCoordinates(prd.platform, prd.layer);
+        return {
+          id: prd.id,
+          type: 'custom',
+          position: coords,
+          data: {
+            badge: prd.badge,
+            title: prd.title,
+            description: `Requirements PRD file: ${prd.filename}`,
+            glow: prd.glow,
+            icon: prd.platform === 'linux' 
+              ? <IconSource /> 
+              : prd.platform === 'macos' 
+                ? <IconActive /> 
+                : prd.platform === 'windows' 
+                  ? <IconNeverConnected /> 
+                  : <IconManager />,
+          },
+          style: {
+            width: 260,
+            opacity: step >= prd.layer ? 1 : 0,
+          },
+        };
+      });
     }
   }, [activeTab]);
 
@@ -1067,8 +1487,30 @@ function App() {
           },
         };
       });
-    } else {
+    } else if (activeTab === 'tab3') {
       return tab3EdgesRaw.map((edge) => {
+        const isVisible = step >= edge.appearsAt;
+        return {
+          id: `${edge.id}-print-${step}`,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
+    } else {
+      return tab4EdgesRaw.map((edge) => {
         const isVisible = step >= edge.appearsAt;
         return {
           id: `${edge.id}-print-${step}`,
@@ -1098,28 +1540,34 @@ function App() {
       if (tab1Step < MAX_STEPS) setTab1Step((s) => s + 1);
     } else if (activeTab === 'tab2') {
       if (tab2Step < MAX_STEPS) setTab2Step((s) => s + 1);
-    } else {
+    } else if (activeTab === 'tab3') {
       if (tab3Step < MAX_STEPS) setTab3Step((s) => s + 1);
+    } else {
+      if (tab4Step < MAX_STEPS) setTab4Step((s) => s + 1);
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step]);
 
   const handlePrev = useCallback(() => {
     if (activeTab === 'tab1') {
       if (tab1Step > 1) setTab1Step((s) => s - 1);
     } else if (activeTab === 'tab2') {
       if (tab2Step > 1) setTab2Step((s) => s - 1);
-    } else {
+    } else if (activeTab === 'tab3') {
       if (tab3Step > 1) setTab3Step((s) => s - 1);
+    } else {
+      if (tab4Step > 1) setTab4Step((s) => s - 1);
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step]);
 
   const handleReset = useCallback(() => {
     if (activeTab === 'tab1') {
       setTab1Step(1);
     } else if (activeTab === 'tab2') {
       setTab2Step(1);
-    } else {
+    } else if (activeTab === 'tab3') {
       setTab3Step(1);
+    } else {
+      setTab4Step(1);
     }
   }, [activeTab]);
 
@@ -1127,7 +1575,7 @@ function App() {
     window.print();
   }, []);
 
-  const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3') => {
+  const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3' | 'tab4') => {
     setActiveTab(tab);
   }, []);
 
@@ -1146,7 +1594,7 @@ function App() {
 
   return (
     <>
-      <div className="app-container">
+      <div className="app-container" style={{ '--sidebar-width': `${sidebarWidth}px` } as React.CSSProperties}>
       {/* Header bar and tab buttons */}
       <header className="header-bar">
         <div className="brand-section">
@@ -1176,6 +1624,12 @@ function App() {
           >
             <IconAttacker /> K8s Attack Vectors
           </button>
+          <button 
+            onClick={() => handleTabChange('tab4')} 
+            className={`tab-btn ${activeTab === 'tab4' ? 'active' : ''}`}
+          >
+            <IconPDF /> Architecture & PRDs
+          </button>
         </nav>
       </header>
 
@@ -1195,6 +1649,7 @@ function App() {
             elementsSelectable={true}
             zoomOnScroll={true}
             panOnDrag={true}
+            onNodeClick={activeTab === 'tab4' ? (_e, node) => setSelectedPrdId(node.id) : undefined}
           >
             <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="#222635" />
             <Controls showInteractive={false} />
@@ -1247,41 +1702,82 @@ function App() {
           </div>
         </section>
 
-        {/* Walkthrough Detail Sidebar */}
-        <aside className="walkthrough-panel">
-          <div className="walkthrough-header">
-            <h2>Detailed Guide</h2>
-            <span className="step-badge">STEP 0{activeStep}</span>
-          </div>
-
-          <div className="walkthrough-body">
-            <div className="walkthrough-title-section">
-              <div className="walkthrough-icon-container" style={{ color: activeTab === 'tab1' ? 'var(--accent-indigo)' : activeTab === 'tab2' ? 'var(--accent-cyan)' : 'var(--accent-rose)' }}>
-                {activeWalkthrough.icon}
+        {/* Walkthrough Detail / PRD Reader Sidebar */}
+        <aside className="walkthrough-panel" style={{ width: `${sidebarWidth}px`, position: 'relative' }}>
+          <div className="sidebar-resizer" onMouseDown={startResizing} />
+          {activeTab === 'tab4' ? (
+            // Tab 4: Requirement PRD Reader
+            (() => {
+              const activePrd = parsedPrds.find(p => p.id === selectedPrdId);
+              return (
+                <div className="prd-reader-container">
+                  {activePrd ? (
+                    <>
+                      <div className="prd-reader-header" style={{ padding: '24px 24px 0 24px' }}>
+                        <h2 style={{ textTransform: 'none' }}>{activePrd.title}</h2>
+                        <div className="prd-meta-row" style={{ marginTop: '8px' }}>
+                          <span className={`prd-meta-badge ${activePrd.platform}`}>
+                            {activePrd.platform.toUpperCase()}
+                          </span>
+                          <span className="prd-filename-pill">
+                            {activePrd.filename}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="walkthrough-body" style={{ overflowY: 'auto' }}>
+                        {renderMarkdown(activePrd.content)}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="empty-prd-state">
+                      <div className="empty-prd-icon" style={{ color: 'var(--accent-indigo)' }}>
+                        <IconNeverConnected />
+                      </div>
+                      <h3>No PRD Selected</h3>
+                      <p>Click on any node in the platform architecture flowchart to open and read its requirement PRD document.</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })()
+          ) : (
+            // Tabs 1, 2, 3: Normal walkthrough
+            <>
+              <div className="walkthrough-header">
+                <h2>Detailed Guide</h2>
+                <span className="step-badge">STEP 0{activeStep}</span>
               </div>
-              <div>
-                <span className="walkthrough-stage-tag">{activeWalkthrough.stageTag}</span>
-                <h3 className="walkthrough-title">{activeWalkthrough.title}</h3>
-              </div>
-            </div>
 
-            <p className="walkthrough-desc">
-              {activeWalkthrough.description}
-            </p>
+              <div className="walkthrough-body">
+                <div className="walkthrough-title-section">
+                  <div className="walkthrough-icon-container" style={{ color: activeTab === 'tab1' ? 'var(--accent-indigo)' : activeTab === 'tab2' ? 'var(--accent-cyan)' : 'var(--accent-rose)' }}>
+                    {activeWalkthrough.icon}
+                  </div>
+                  <div>
+                    <span className="walkthrough-stage-tag">{activeWalkthrough.stageTag}</span>
+                    <h3 className="walkthrough-title">{activeWalkthrough.title}</h3>
+                  </div>
+                </div>
 
-            <div className="walkthrough-details-box">
-              <h4 className="details-box-header">Under the Hood (Telemetry Details)</h4>
-              <p className="details-box-content">
-                {activeWalkthrough.technicalDetails}
-              </p>
-              
-              <div className="technical-pills">
-                {activeWalkthrough.technologies.map((tech, idx) => (
-                  <span key={idx} className="tech-pill">{tech}</span>
-                ))}
+                <p className="walkthrough-desc">
+                  {activeWalkthrough.description}
+                </p>
+
+                <div className="walkthrough-details-box">
+                  <h4 className="details-box-header">Under the Hood (Telemetry Details)</h4>
+                  <p className="details-box-content">
+                    {activeWalkthrough.technicalDetails}
+                  </p>
+                  
+                  <div className="technical-pills">
+                    {activeWalkthrough.technologies.map((tech, idx) => (
+                      <span key={idx} className="tech-pill">{tech}</span>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </aside>
 
       </main>
@@ -1300,7 +1796,9 @@ function App() {
                     ? 'Endpoint Agent State Workflow' 
                     : activeTab === 'tab2' 
                       ? 'Log Collector Modules Dataflow' 
-                      : 'Kubernetes Cluster Attack Vectors'}
+                      : activeTab === 'tab3'
+                        ? 'Kubernetes Cluster Attack Vectors'
+                        : 'EDR Requirement PRDs Architecture Map'}
                 </h2>
                 <span className="print-step-badge">PAGE {stepNum} of 5</span>
               </div>

@@ -58,6 +58,8 @@ If the enviroment scaffolds a similar TypeScript setup that supports ReactFlow q
         POD -->|"post-exploit"| POST["Webshell - C2 - Exfil - Cryptomining - Backdoor"]
         POD -->|"escape"| NODE
     ```
+    - Tab 4 for list all files insides `/prds`
+      - Each node is clickable and open the file to reads
 - Each state is a node
 - Appear one after another
 
