@@ -99,6 +99,16 @@ const IconManager = () => (
   </svg>
 );
 
+const IconPDF = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+    <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+    <path d="M10 9H8" />
+    <path d="M16 13H8" />
+    <path d="M16 17H8" />
+  </svg>
+);
+
 // --- Hacker Custom Icons for Tab 3 ---
 
 const IconAttacker = () => (
@@ -594,8 +604,8 @@ const tab3NodesRaw = [
     type: 'k8s-cluster',
     x: 930,
     y: 30,
-    width: 290,
-    height: 490,
+    width: 300,
+    height: 505,
   },
   // Inside Cluster: Child Workloads
   {
@@ -814,7 +824,7 @@ function App() {
   // Active step depending on the tab
   const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : tab3Step;
 
-  // ReactFlow Nodes Creation
+  // ReactFlow Nodes Creation (interactive dashboard view)
   const nodes = useMemo(() => {
     if (activeTab === 'tab1') {
       return tab1NodesRaw.map((node) => ({
@@ -829,7 +839,7 @@ function App() {
           icon: node.icon,
         },
         style: {
-          width: 250,
+          width: 260,
           opacity: tab1Step >= node.appearsAt ? 1 : 0,
           transition: 'opacity 0.5s ease-in-out',
           pointerEvents: tab1Step >= node.appearsAt ? 'auto' : 'none',
@@ -848,7 +858,7 @@ function App() {
           icon: node.icon,
         },
         style: {
-          width: 250,
+          width: 260,
           opacity: tab2Step >= node.appearsAt ? 1 : 0,
           transition: 'opacity 0.5s ease-in-out',
           pointerEvents: tab2Step >= node.appearsAt ? 'auto' : 'none',
@@ -869,7 +879,7 @@ function App() {
           icon: node.icon,
         },
         style: {
-          width: node.type === 'k8s-cluster' ? node.width : 250,
+          width: node.type === 'k8s-cluster' ? node.width : 260,
           height: node.type === 'k8s-cluster' ? node.height : undefined,
           opacity: tab3Step >= node.appearsAt ? 1 : 0,
           transition: 'opacity 0.5s ease-in-out',
@@ -879,7 +889,7 @@ function App() {
     }
   }, [activeTab, tab1Step, tab2Step, tab3Step]);
 
-  // ReactFlow Edges Creation
+  // ReactFlow Edges Creation (interactive dashboard view)
   const edges = useMemo(() => {
     if (activeTab === 'tab1') {
       return tab1EdgesRaw.map((edge) => {
@@ -953,6 +963,135 @@ function App() {
     }
   }, [activeTab, tab1Step, tab2Step, tab3Step]);
 
+  // Helpers to get specific state parameters per page when generating print files
+  const getNodesForStep = useCallback((step: number) => {
+    if (activeTab === 'tab1') {
+      return tab1NodesRaw.map((node) => ({
+        id: node.id,
+        type: 'custom',
+        position: { x: node.x, y: node.y },
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: 260,
+          opacity: step >= node.appearsAt ? 1 : 0,
+        },
+      }));
+    } else if (activeTab === 'tab2') {
+      return tab2NodesRaw.map((node) => ({
+        id: node.id,
+        type: 'custom',
+        position: { x: node.x, y: node.y },
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: 260,
+          opacity: step >= node.appearsAt ? 1 : 0,
+        },
+      }));
+    } else {
+      return tab3NodesRaw.map((node) => ({
+        id: node.id,
+        type: node.type || 'custom',
+        position: { x: node.x, y: node.y },
+        parentNode: node.parentNode,
+        extent: node.extent,
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: node.type === 'k8s-cluster' ? node.width : 260,
+          height: node.type === 'k8s-cluster' ? node.height : undefined,
+          opacity: step >= node.appearsAt ? 1 : 0,
+        },
+      }));
+    }
+  }, [activeTab]);
+
+  const getEdgesForStep = useCallback((step: number) => {
+    if (activeTab === 'tab1') {
+      return tab1EdgesRaw.map((edge) => {
+        const isVisible = step >= edge.appearsAt;
+        return {
+          id: `${edge.id}-print-${step}`,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
+    } else if (activeTab === 'tab2') {
+      return tab2EdgesRaw.map((edge) => {
+        const isVisible = step >= edge.appearsAt;
+        return {
+          id: `${edge.id}-print-${step}`,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
+    } else {
+      return tab3EdgesRaw.map((edge) => {
+        const isVisible = step >= edge.appearsAt;
+        return {
+          id: `${edge.id}-print-${step}`,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
+    }
+  }, [activeTab]);
+
   // --- Step Controls ---
   const handleNext = useCallback(() => {
     if (activeTab === 'tab1') {
@@ -984,6 +1123,10 @@ function App() {
     }
   }, [activeTab]);
 
+  const handleExportPDF = useCallback(() => {
+    window.print();
+  }, []);
+
   const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3') => {
     setActiveTab(tab);
   }, []);
@@ -1002,7 +1145,8 @@ function App() {
   }, [activeTab, activeStep]);
 
   return (
-    <div className="app-container">
+    <>
+      <div className="app-container">
       {/* Header bar and tab buttons */}
       <header className="header-bar">
         <div className="brand-section">
@@ -1076,6 +1220,9 @@ function App() {
               <button onClick={handleReset} className="reset-btn">
                 Reset Flow
               </button>
+              <button onClick={handleExportPDF} className="pdf-btn">
+                <IconPDF /> Export PDF
+              </button>
             </div>
 
             {/* Futuristic Stepper Progress Indicators */}
@@ -1139,6 +1286,62 @@ function App() {
 
       </main>
     </div>
+
+    {/* Hidden print container that renders all 5 steps, each as a page */}
+    <div className="print-only-container">
+        {Array.from({ length: 5 }).map((_, idx) => {
+          const stepNum = idx + 1;
+          const stepWalkthrough = walkthroughData[activeTab][stepNum];
+          return (
+            <div className="print-page" key={stepNum}>
+              <div className="print-page-header">
+                <h2>
+                  {activeTab === 'tab1' 
+                    ? 'Endpoint Agent State Workflow' 
+                    : activeTab === 'tab2' 
+                      ? 'Log Collector Modules Dataflow' 
+                      : 'Kubernetes Cluster Attack Vectors'}
+                </h2>
+                <span className="print-step-badge">PAGE {stepNum} of 5</span>
+              </div>
+              
+              <div className="print-flow-container">
+                <ReactFlow
+                  nodes={getNodesForStep(stepNum) as Node[]}
+                  edges={getEdgesForStep(stepNum) as Edge[]}
+                  nodeTypes={nodeTypes}
+                  fitView
+                  fitViewOptions={{ padding: 0.15 }}
+                  nodesDraggable={false}
+                  nodesConnectable={false}
+                  elementsSelectable={false}
+                  zoomOnScroll={false}
+                  panOnDrag={false}
+                >
+                  <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="#cbd5e1" />
+                </ReactFlow>
+              </div>
+              
+              <div className="print-walkthrough-box">
+                <div className="print-walkthrough-title-section">
+                  <span className="print-stage-tag">{stepWalkthrough.stageTag}</span>
+                  <h3 className="print-walkthrough-title">{stepWalkthrough.title}</h3>
+                </div>
+                <p className="print-walkthrough-desc">{stepWalkthrough.description}</p>
+                <div className="print-details-box">
+                  <strong>Technical Details:</strong> {stepWalkthrough.technicalDetails}
+                  <div className="print-tech-pills">
+                    {stepWalkthrough.technologies.map((tech, i) => (
+                      <span className="print-tech-pill" key={i}>{tech}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }
 

@@ -2,6 +2,8 @@
 
 This is a React-based interactive dashboard built to visualize Endpoint Detection and Response (EDR) workflows. It features a premium, responsive cybersecurity dashboard layout utilizing ReactFlow, detailed walkthrough guides, and real-time animated flow vectors.
 
+![EDR Workflow Animation](workflow.gif)
+
 ---
 
 ## 🌟 Visual & Interactive Features
@@ -58,3 +60,14 @@ Build a fully optimized static distribution folder:
 ```bash
 npm run build
 ```
+
+### 5. Exporting Slideshow PDF
+To generate a vector-perfect, 5-page PDF report of any active tab:
+1. Select the target tab at the top of the interface (Endpoint State, Log Collector, or K8s Vectors).
+2. Click the red **Export PDF** button in the bottom controls bar (or press `Cmd + P` / `Ctrl + P`).
+3. In the browser print dialog:
+   - **Destination**: Save as PDF
+   - **Layout**: Landscape
+   - **Pages**: All (which generates exactly 5 pages, one for each phase)
+   - **Options**: Enable **Background graphics** (critical for rendering security status glows, dashed pipelines, and node backdrops correctly).
+4. Click **Save** to generate your high-fidelity, 5-page slideshow PDF document.
