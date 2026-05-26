@@ -188,6 +188,45 @@ const IconPostExploit = () => (
   </svg>
 );
 
+const IconDetection = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+
+const IconScanner = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" x2="16.65" y1="21" y2="16.65" />
+    <line x1="11" x2="11" y1="8" y2="14" />
+    <line x1="8" x2="14" y1="11" y2="11" />
+  </svg>
+);
+
+const IconDatabase = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <ellipse cx="12" cy="5" rx="9" ry="3" />
+    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+    <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3" />
+  </svg>
+);
+
+const IconBlock = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  </svg>
+);
+
+const IconAlert = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+    <line x1="12" x2="12" y1="9" y2="13" />
+    <line x1="12" x2="12.01" y1="17" y2="17" />
+  </svg>
+);
+
 interface CustomNodeProps {
   data: {
     badge?: string;
@@ -678,8 +717,74 @@ const tab3EdgesRaw: EdgeConfig[] = [
   { id: 'ep-n', source: 'POD', target: 'NODE', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 5, label: 'escape', color: 'var(--accent-rose)' },
 ];
 
+// --- TAB 5: Local Threat Prevention Flow ---
+const tab5NodesRaw = [
+  {
+    id: 't5-1',
+    appearsAt: 1,
+    badge: 'DETECTION SENSOR',
+    title: 'Syscall Interception',
+    description: 'A system call (e.g. execve) is intercepted at the kernel boundary by eBPF/ESF/Minifilters before execution.',
+    glow: 'var(--accent-cyan)',
+    icon: <IconDetection />,
+    x: 50,
+    y: 250,
+  },
+  {
+    id: 't5-2',
+    appearsAt: 2,
+    badge: 'STATIC ANALYSIS',
+    title: 'YARA & Entropy Scan',
+    description: 'Analyzes executable structures (PE/ELF), evaluates binary entropy, and executes YARA signature scans in user-space.',
+    glow: 'var(--accent-violet)',
+    icon: <IconScanner />,
+    x: 360,
+    y: 250,
+  },
+  {
+    id: 't5-3',
+    appearsAt: 3,
+    badge: 'DATABASE REPUTATION',
+    title: 'Threat Intelligence Cache',
+    description: 'Queries the local high-performance key-value reputation database to verify cryptographic SHA-256 hashes of payloads.',
+    glow: 'var(--accent-amber)',
+    icon: <IconDatabase />,
+    x: 670,
+    y: 250,
+  },
+  {
+    id: 't5-4',
+    appearsAt: 4,
+    badge: 'ACTIVE MITIGATION',
+    title: 'LSM Policy Block',
+    description: 'Enforces a policy decision. Instructs BPF LSM or file filters to deny the execution and returns access-denied.',
+    glow: 'var(--accent-rose)',
+    icon: <IconBlock />,
+    x: 980,
+    y: 250,
+  },
+  {
+    id: 't5-5',
+    appearsAt: 5,
+    badge: 'INCIDENT REPORT',
+    title: 'OCSF Telemetry Broadcast',
+    description: 'Generates a standardized OCSF 1.7.0 threat event and streams high-priority containment telemetry to the cloud via mTLS.',
+    glow: 'var(--accent-pink)',
+    icon: <IconAlert />,
+    x: 1290,
+    y: 250,
+  },
+];
+
+const tab5EdgesRaw: EdgeConfig[] = [
+  { id: 'et5-1-2', source: 't5-1', target: 't5-2', sourceHandle: 'right', targetHandle: 'left', appearsAt: 2, color: 'var(--accent-violet)' },
+  { id: 'et5-2-3', source: 't5-2', target: 't5-3', sourceHandle: 'right', targetHandle: 'left', appearsAt: 3, color: 'var(--accent-amber)' },
+  { id: 'et5-3-4', source: 't5-3', target: 't5-4', sourceHandle: 'right', targetHandle: 'left', appearsAt: 4, color: 'var(--accent-rose)' },
+  { id: 'et5-4-5', source: 't5-4', target: 't5-5', sourceHandle: 'right', targetHandle: 'left', appearsAt: 5, color: 'var(--accent-pink)' },
+];
+
 // --- Walkthrough Database ---
-const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4', Record<number, {
+const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5', Record<number, {
   title: string;
   stageTag: string;
   description: string;
@@ -853,6 +958,48 @@ const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4', Record<number, 
       technicalDetails: 'Integrated within initramfs on Linux (using early BPF LSM loading) and ELAM system driver registries on Windows to validate early boot path signatures.',
       technologies: ['BPF LSM', 'initramfs loader', 'ELAM Drivers'],
       icon: <IconNeverConnected />,
+    },
+  },
+  tab5: {
+    1: {
+      title: 'Syscall Interception',
+      stageTag: 'EVENT DETECTION & HOOKING',
+      description: 'A user-space process initiates a potentially dangerous execution. The EDR agent\'s kernel hook (eBPF or macOS Endpoint Security authorization callback) intercepts the syscall before the payload starts.',
+      technicalDetails: 'Registers low-level probes on kernel entrypoints (e.g. sys_enter_execve). The syscall is temporarily suspended or logged depending on target platform engine capabilities.',
+      technologies: ['eBPF Probes', 'macOS ESF', 'Minifilter Drivers', 'Syscall Hook'],
+      icon: <IconDetection />,
+    },
+    2: {
+      title: 'YARA & Entropy Scan',
+      stageTag: 'STATIC BINARY INSPECTION',
+      description: 'The intercepted binary is checked by the static analysis module. It executes YARA signature scans, parses section headers (PE/ELF), and evaluates file entropy to identify packed malware.',
+      technicalDetails: 'User-space daemon runs parallel signature checks using compiled YARA tables. Calculates structural entropy to detect encrypted shellcode or custom injection sections.',
+      technologies: ['YARA Engine', 'ELF/PE Parser', 'Entropy Analysis', 'Signature Database'],
+      icon: <IconScanner />,
+    },
+    3: {
+      title: 'Threat Intelligence Cache',
+      stageTag: 'LOCAL DATABASE LOOKUP',
+      description: 'Queries the local high-performance key-value reputation database. It compares the target file\'s cryptographic hash (SHA-256) against a cached database of known-bad payloads.',
+      technicalDetails: 'Queries a lightning-fast local cache. If a match is found, the file reputation is flagged as malicious immediately, skipping heavier analysis stages.',
+      technologies: ['SHA-256 Hashing', 'Local DB Cache', 'Threat Intel Sync', 'Hash Verification'],
+      icon: <IconDatabase />,
+    },
+    4: {
+      title: 'LSM Policy Block',
+      stageTag: 'KERNEL BOUNDARY PREVENTION',
+      description: 'Based on signature, entropy, or reputation alerts, the EDR engine enforces a block policy. It instructs BPF LSM or the OS file filter driver to reject the execution with access-denied.',
+      technicalDetails: 'BPF LSM returns an EACCES error to the kernel execve call. The command terminates immediately in the shell, before any malicious binary instructions load.',
+      technologies: ['BPF LSM Hooks', 'fanotify Block', 'macOS ES Block', 'EACCES Enforcement'],
+      icon: <IconBlock />,
+    },
+    5: {
+      title: 'Telemetry Alert Broadcast',
+      stageTag: 'SECURITY INCIDENT REPORT',
+      description: 'The EDR daemon packages the threat context into a standardized OCSF 1.7.0 event. It streams a high-priority incident alert over a secure mTLS pipeline to the SaaS cloud console.',
+      technicalDetails: 'Generates an OCSF Security Activity metadata block containing host metrics, target hash, parent process lineage, and blocked syscall status. Ingests instantly into cloud SIEM dashboards.',
+      technologies: ['OCSF 1.7.0 Schema', 'mTLS Ingestion', 'Incident Telemetry', 'SaaS SIEM Logging'],
+      icon: <IconAlert />,
     },
   },
 };
@@ -1125,11 +1272,12 @@ const MAX_STEPS = 5;
 // ==========================================
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2' | 'tab3' | 'tab4'>('tab1');
+  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5'>('tab1');
   const [tab1Step, setTab1Step] = useState(1);
   const [tab2Step, setTab2Step] = useState(1);
   const [tab3Step, setTab3Step] = useState(1);
   const [tab4Step, setTab4Step] = useState(1);
+  const [tab5Step, setTab5Step] = useState(1);
   const [selectedPrdId, setSelectedPrdId] = useState<string>('../prds/README.md');
   const [sidebarWidth, setSidebarWidth] = useState(380);
   const [isResizing, setIsResizing] = useState(false);
@@ -1162,7 +1310,7 @@ function App() {
   }, [resize, stopResizing]);
 
   // Active step depending on the tab
-  const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : activeTab === 'tab3' ? tab3Step : tab4Step;
+  const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : activeTab === 'tab3' ? tab3Step : activeTab === 'tab4' ? tab4Step : tab5Step;
 
   // ReactFlow Nodes Creation (interactive dashboard view)
   const nodes = useMemo(() => {
@@ -1226,6 +1374,25 @@ function App() {
           pointerEvents: tab3Step >= node.appearsAt ? 'auto' : 'none',
         },
       }));
+    } else if (activeTab === 'tab5') {
+      return tab5NodesRaw.map((node) => ({
+        id: node.id,
+        type: 'custom',
+        position: { x: node.x, y: node.y },
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: 260,
+          opacity: tab5Step >= node.appearsAt ? 1 : 0,
+          transition: 'opacity 0.5s ease-in-out',
+          pointerEvents: tab5Step >= node.appearsAt ? 'auto' : 'none',
+        },
+      }));
     } else {
       return parsedPrds.map((prd) => {
         const coords = getPrdCoordinates(prd.platform, prd.layer);
@@ -1258,7 +1425,7 @@ function App() {
         };
       });
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, selectedPrdId]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, selectedPrdId]);
 
   // ReactFlow Edges Creation (interactive dashboard view)
   const edges = useMemo(() => {
@@ -1331,6 +1498,29 @@ function App() {
           },
         };
       });
+    } else if (activeTab === 'tab5') {
+      return tab5EdgesRaw.map((edge) => {
+        const isVisible = tab5Step >= edge.appearsAt;
+        return {
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+            transition: 'opacity 0.4s ease',
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
     } else {
       return tab4EdgesRaw.map((edge) => {
         const isVisible = tab4Step >= edge.appearsAt;
@@ -1355,7 +1545,7 @@ function App() {
         };
       });
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step]);
 
   // Helpers to get specific state parameters per page when generating print files
   const getNodesForStep = useCallback((step: number) => {
@@ -1410,6 +1600,23 @@ function App() {
         style: {
           width: node.type === 'k8s-cluster' ? node.width : 260,
           height: node.type === 'k8s-cluster' ? node.height : undefined,
+          opacity: step >= node.appearsAt ? 1 : 0,
+        },
+      }));
+    } else if (activeTab === 'tab5') {
+      return tab5NodesRaw.map((node) => ({
+        id: node.id,
+        type: 'custom',
+        position: { x: node.x, y: node.y },
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: 260,
           opacity: step >= node.appearsAt ? 1 : 0,
         },
       }));
@@ -1509,6 +1716,28 @@ function App() {
           },
         };
       });
+    } else if (activeTab === 'tab5') {
+      return tab5EdgesRaw.map((edge) => {
+        const isVisible = step >= edge.appearsAt;
+        return {
+          id: `${edge.id}-print-${step}`,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
     } else {
       return tab4EdgesRaw.map((edge) => {
         const isVisible = step >= edge.appearsAt;
@@ -1542,10 +1771,12 @@ function App() {
       if (tab2Step < MAX_STEPS) setTab2Step((s) => s + 1);
     } else if (activeTab === 'tab3') {
       if (tab3Step < MAX_STEPS) setTab3Step((s) => s + 1);
-    } else {
+    } else if (activeTab === 'tab4') {
       if (tab4Step < MAX_STEPS) setTab4Step((s) => s + 1);
+    } else {
+      if (tab5Step < MAX_STEPS) setTab5Step((s) => s + 1);
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step]);
 
   const handlePrev = useCallback(() => {
     if (activeTab === 'tab1') {
@@ -1554,10 +1785,12 @@ function App() {
       if (tab2Step > 1) setTab2Step((s) => s - 1);
     } else if (activeTab === 'tab3') {
       if (tab3Step > 1) setTab3Step((s) => s - 1);
-    } else {
+    } else if (activeTab === 'tab4') {
       if (tab4Step > 1) setTab4Step((s) => s - 1);
+    } else {
+      if (tab5Step > 1) setTab5Step((s) => s - 1);
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step]);
 
   const handleReset = useCallback(() => {
     if (activeTab === 'tab1') {
@@ -1566,8 +1799,10 @@ function App() {
       setTab2Step(1);
     } else if (activeTab === 'tab3') {
       setTab3Step(1);
-    } else {
+    } else if (activeTab === 'tab4') {
       setTab4Step(1);
+    } else {
+      setTab5Step(1);
     }
   }, [activeTab]);
 
@@ -1575,7 +1810,7 @@ function App() {
     window.print();
   }, []);
 
-  const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3' | 'tab4') => {
+  const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5') => {
     setActiveTab(tab);
   }, []);
 
@@ -1629,6 +1864,12 @@ function App() {
             className={`tab-btn ${activeTab === 'tab4' ? 'active' : ''}`}
           >
             <IconPDF /> Architecture & PRDs
+          </button>
+          <button 
+            onClick={() => handleTabChange('tab5')} 
+            className={`tab-btn ${activeTab === 'tab5' ? 'active' : ''}`}
+          >
+            <IconBlock /> Local Threat Prevention
           </button>
         </nav>
       </header>
@@ -1798,7 +2039,9 @@ function App() {
                       ? 'Log Collector Modules Dataflow' 
                       : activeTab === 'tab3'
                         ? 'Kubernetes Cluster Attack Vectors'
-                        : 'EDR Requirement PRDs Architecture Map'}
+                        : activeTab === 'tab4'
+                          ? 'EDR Requirement PRDs Architecture Map'
+                          : 'Local Threat Prevention Flow'}
                 </h2>
                 <span className="print-step-badge">PAGE {stepNum} of 5</span>
               </div>

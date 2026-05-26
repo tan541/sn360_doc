@@ -60,6 +60,7 @@ If the enviroment scaffolds a similar TypeScript setup that supports ReactFlow q
     ```
     - Tab 4 for list all files insides `/prds`
       - Each node is clickable and open the file to reads
+    - Tab 5 for Local Threat Prevention flow
 - Each state is a node
 - Appear one after another
 
