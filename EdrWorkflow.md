@@ -61,6 +61,38 @@ If the enviroment scaffolds a similar TypeScript setup that supports ReactFlow q
     - Tab 4 for list all files insides `/prds`
       - Each node is clickable and open the file to reads
     - Tab 5 for Local Threat Prevention flow
+    - Tab 6 for Data Loss Prevention. Below is mermaid version:
+    ```mermaid
+    graph TD
+        %% Nodes
+        Users[Data users]
+        DPD[Document Protection Detection]
+        CLD[Classification Label Detection]
+        PSID[PII or sensitive information detection]
+        Prompt[Prompt User to Confirm]
+        Final[/"Transfer Data to External <br/> Copy to Mobile Storage"/]
+        Protect[Protect the document and send again]
+    
+        %% Edges
+        Users -- "User send documents or emails via monitored channels" --> DPD
+        DPD -- "Protected Documents and Emails" --> Final
+        DPD -- "Documents With no Protection" --> CLD
+        
+        CLD -- "Restricted, Public or Without Label" --> PSID
+        CLD -- "Highly Confidential or Confidential Documents" --> Prompt
+        
+        PSID -- "No PII or Non-Sensitive Documents" --> Final
+        PSID -- "Contain PII or sensitive information" --> Prompt
+        
+        Prompt -- "User Confirmed (Allow)" --> Final
+        Prompt -- "User Cancel send (Block)" --> Protect
+        
+        Protect -- "Yellow Arrow loop" --> Users
+    
+        %% Styling for visual clarity
+        style Final fill:#f9f9f9,stroke:#333
+        style Users fill:#fff,stroke:#333
+      ```
 - Each state is a node
 - Appear one after another
 

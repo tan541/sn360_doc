@@ -783,8 +783,102 @@ const tab5EdgesRaw: EdgeConfig[] = [
   { id: 'et5-4-5', source: 't5-4', target: 't5-5', sourceHandle: 'right', targetHandle: 'left', appearsAt: 5, color: 'var(--accent-pink)' },
 ];
 
+// --- TAB 6: Data Loss Prevention Flow ---
+const tab6NodesRaw = [
+  {
+    id: 't6-users',
+    appearsAt: 1,
+    badge: 'DATA OWNERS',
+    title: 'Data Users',
+    description: 'End users sending documents or emails through monitored channels such as corporate email, cloud upload, or removable media.',
+    glow: 'var(--accent-cyan)',
+    icon: <IconSource />,
+    x: 560,
+    y: 20,
+  },
+  {
+    id: 't6-dpd',
+    appearsAt: 1,
+    badge: 'STAGE 1 — DPD',
+    title: 'Document Protection Detection',
+    description: 'Inspects outgoing documents and emails to determine whether they are already encrypted or rights-protected before further analysis.',
+    glow: 'var(--accent-violet)',
+    icon: <IconDetection />,
+    x: 560,
+    y: 280,
+  },
+  {
+    id: 't6-cld',
+    appearsAt: 2,
+    badge: 'STAGE 2 — CLD',
+    title: 'Classification Label Detection',
+    description: 'Reads document metadata labels (Public, Restricted, Confidential, Highly Confidential) applied by users or auto-classifiers.',
+    glow: 'var(--accent-amber)',
+    icon: <IconScanner />,
+    x: 560,
+    y: 540,
+  },
+  {
+    id: 't6-psid',
+    appearsAt: 3,
+    badge: 'STAGE 3 — PSID',
+    title: 'PII / Sensitive Info Detection',
+    description: 'Scans document content for PII and other sensitive patterns (IDs, credit cards, secrets) using regex, dictionaries, and ML classifiers.',
+    glow: 'var(--accent-emerald)',
+    icon: <IconDatabase />,
+    x: 60,
+    y: 800,
+  },
+  {
+    id: 't6-prompt',
+    appearsAt: 3,
+    badge: 'STAGE 4 — USER PROMPT',
+    title: 'Prompt User to Confirm',
+    description: 'Presents the user with a justification dialog when a document is sensitive or carries a confidential label, requiring an explicit allow or cancel decision.',
+    glow: 'var(--accent-pink)',
+    icon: <IconPending />,
+    x: 1060,
+    y: 800,
+  },
+  {
+    id: 't6-final',
+    appearsAt: 2,
+    badge: 'STAGE 5 — EGRESS',
+    title: 'Transfer to External / Mobile Storage',
+    description: 'Terminal state: the data is allowed to leave the endpoint — sent externally over a monitored channel or copied to mobile storage.',
+    glow: 'var(--accent-rose)',
+    icon: <IconAlert />,
+    x: 60,
+    y: 1080,
+  },
+  {
+    id: 't6-protect',
+    appearsAt: 4,
+    badge: 'STAGE 6 — REMEDIATION',
+    title: 'Protect Document & Resend',
+    description: 'When the user cancels (block), the document is rights-protected or encrypted before being routed back to the user for a compliant re-send attempt.',
+    glow: 'var(--accent-indigo)',
+    icon: <IconBlock />,
+    x: 1060,
+    y: 1080,
+  },
+];
+
+const tab6EdgesRaw: EdgeConfig[] = [
+  { id: 'et6-users-dpd', source: 't6-users', target: 't6-dpd', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 1, label: 'send via monitored channel', color: 'var(--accent-cyan)' },
+  { id: 'et6-dpd-final', source: 't6-dpd', target: 't6-final', sourceHandle: 'left', targetHandle: 'top', appearsAt: 2, label: 'already protected', color: 'var(--accent-rose)' },
+  { id: 'et6-dpd-cld', source: 't6-dpd', target: 't6-cld', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 2, label: 'no protection', color: 'var(--accent-violet)' },
+  { id: 'et6-cld-psid', source: 't6-cld', target: 't6-psid', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 3, label: 'Public / Restricted / No label', color: 'var(--accent-emerald)' },
+  { id: 'et6-cld-prompt', source: 't6-cld', target: 't6-prompt', sourceHandle: 'right', targetHandle: 'top', appearsAt: 3, label: 'Confidential / Highly Confidential', color: 'var(--accent-pink)' },
+  { id: 'et6-psid-final', source: 't6-psid', target: 't6-final', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 4, label: 'no PII', color: 'var(--accent-rose)' },
+  { id: 'et6-psid-prompt', source: 't6-psid', target: 't6-prompt', sourceHandle: 'right', targetHandle: 'left', appearsAt: 4, label: 'contains PII', color: 'var(--accent-pink)' },
+  { id: 'et6-prompt-final', source: 't6-prompt', target: 't6-final', sourceHandle: 'left', targetHandle: 'right', appearsAt: 4, label: 'allow', color: 'var(--accent-rose)' },
+  { id: 'et6-prompt-protect', source: 't6-prompt', target: 't6-protect', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 4, label: 'block', color: 'var(--accent-indigo)' },
+  { id: 'et6-protect-users', source: 't6-protect', target: 't6-users', sourceHandle: 'right', targetHandle: 'right', type: 'smoothstep', appearsAt: 5, label: 'protect & resend (loop)', color: 'var(--accent-amber)' },
+];
+
 // --- Walkthrough Database ---
-const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5', Record<number, {
+const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6', Record<number, {
   title: string;
   stageTag: string;
   description: string;
@@ -1000,6 +1094,48 @@ const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5', Record
       technicalDetails: 'Generates an OCSF Security Activity metadata block containing host metrics, target hash, parent process lineage, and blocked syscall status. Ingests instantly into cloud SIEM dashboards.',
       technologies: ['OCSF 1.7.0 Schema', 'mTLS Ingestion', 'Incident Telemetry', 'SaaS SIEM Logging'],
       icon: <IconAlert />,
+    },
+  },
+  tab6: {
+    1: {
+      title: 'Data Egress Attempt',
+      stageTag: 'CHANNEL MONITORING',
+      description: 'A data user attempts to send a document or email through a monitored channel (email gateway, web upload, mobile storage). The DLP agent intercepts the egress event and forwards the payload to Document Protection Detection.',
+      technicalDetails: 'Channel shims hook outbound SMTP, browser uploads, cloud-sync clients, and USB mass-storage writes. Payloads are tagged with channel metadata before evaluation.',
+      technologies: ['SMTP Shim', 'Browser MITM', 'USB Filter Driver', 'Cloud Sync Hook'],
+      icon: <IconSource />,
+    },
+    2: {
+      title: 'Document Protection Detection',
+      stageTag: 'STAGE 1 — DPD',
+      description: 'DPD inspects the document for existing rights protection or encryption. Already-protected payloads are allowed straight to egress; unprotected payloads are forwarded to Classification Label Detection.',
+      technicalDetails: 'Checks RMS/IRM headers, S/MIME and PGP envelopes, and known container encryption signatures. Splits the flow into "protected" (allow) and "unprotected" (inspect further) branches.',
+      technologies: ['RMS / IRM', 'S/MIME', 'PGP', 'Container Encryption Probe'],
+      icon: <IconDetection />,
+    },
+    3: {
+      title: 'Classification Label Detection',
+      stageTag: 'STAGE 2 — CLD',
+      description: 'CLD reads the sensitivity label attached to the document. Public, Restricted, or unlabeled docs go to content scanning (PSID); Confidential and Highly Confidential docs are routed straight to the user prompt.',
+      technicalDetails: 'Parses Microsoft Information Protection labels, custom OOXML metadata, and header tags. Decision tree maps each label tier to either deeper inspection or immediate justification prompt.',
+      technologies: ['MIP Labels', 'OOXML Metadata', 'Label Policy Engine'],
+      icon: <IconScanner />,
+    },
+    4: {
+      title: 'Sensitive Content & User Decision',
+      stageTag: 'STAGE 3+4 — PSID & PROMPT',
+      description: 'PSID scans document content for PII and sensitive patterns. Clean docs flow to egress; docs with PII join the Prompt path. The user must justify the transfer: allow forwards to egress, cancel routes the document to remediation.',
+      technicalDetails: 'Combines regex dictionaries, Luhn checks, and ML classifiers for PII detection. Prompt dialog captures justification text and decision audit trail for compliance.',
+      technologies: ['Regex Dictionaries', 'Luhn / Mod-10', 'ML Classifier', 'Justification Audit Log'],
+      icon: <IconDatabase />,
+    },
+    5: {
+      title: 'Protect & Resend Loop',
+      stageTag: 'STAGE 5 — REMEDIATION LOOP',
+      description: 'When the user cancels the prompt, the document is automatically rights-protected or encrypted and handed back to the user. The user can then re-send the now-protected document, which will short-circuit at DPD on the next pass.',
+      technicalDetails: 'Auto-applies rights template (encrypt, restrict forward/print) and returns the protected copy to the originating client. Loop edge represents the yellow remediation arrow in the source diagram.',
+      technologies: ['Auto Rights Template', 'Encrypt-on-Cancel', 'Remediation Loop'],
+      icon: <IconBlock />,
     },
   },
 };
@@ -1272,12 +1408,13 @@ const MAX_STEPS = 5;
 // ==========================================
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5'>('tab1');
+  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6'>('tab1');
   const [tab1Step, setTab1Step] = useState(1);
   const [tab2Step, setTab2Step] = useState(1);
   const [tab3Step, setTab3Step] = useState(1);
   const [tab4Step, setTab4Step] = useState(1);
   const [tab5Step, setTab5Step] = useState(1);
+  const [tab6Step, setTab6Step] = useState(1);
   const [selectedPrdId, setSelectedPrdId] = useState<string>('../prds/README.md');
   const [sidebarWidth, setSidebarWidth] = useState(380);
   const [isResizing, setIsResizing] = useState(false);
@@ -1310,7 +1447,7 @@ function App() {
   }, [resize, stopResizing]);
 
   // Active step depending on the tab
-  const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : activeTab === 'tab3' ? tab3Step : activeTab === 'tab4' ? tab4Step : tab5Step;
+  const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : activeTab === 'tab3' ? tab3Step : activeTab === 'tab4' ? tab4Step : activeTab === 'tab5' ? tab5Step : tab6Step;
 
   // ReactFlow Nodes Creation (interactive dashboard view)
   const nodes = useMemo(() => {
@@ -1393,6 +1530,25 @@ function App() {
           pointerEvents: tab5Step >= node.appearsAt ? 'auto' : 'none',
         },
       }));
+    } else if (activeTab === 'tab6') {
+      return tab6NodesRaw.map((node) => ({
+        id: node.id,
+        type: 'custom',
+        position: { x: node.x, y: node.y },
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: 260,
+          opacity: tab6Step >= node.appearsAt ? 1 : 0,
+          transition: 'opacity 0.5s ease-in-out',
+          pointerEvents: tab6Step >= node.appearsAt ? 'auto' : 'none',
+        },
+      }));
     } else {
       return parsedPrds.map((prd) => {
         const coords = getPrdCoordinates(prd.platform, prd.layer);
@@ -1425,7 +1581,7 @@ function App() {
         };
       });
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, selectedPrdId]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, selectedPrdId]);
 
   // ReactFlow Edges Creation (interactive dashboard view)
   const edges = useMemo(() => {
@@ -1521,6 +1677,29 @@ function App() {
           },
         };
       });
+    } else if (activeTab === 'tab6') {
+      return tab6EdgesRaw.map((edge) => {
+        const isVisible = tab6Step >= edge.appearsAt;
+        return {
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+            transition: 'opacity 0.4s ease',
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
     } else {
       return tab4EdgesRaw.map((edge) => {
         const isVisible = tab4Step >= edge.appearsAt;
@@ -1545,7 +1724,7 @@ function App() {
         };
       });
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step]);
 
   // Helpers to get specific state parameters per page when generating print files
   const getNodesForStep = useCallback((step: number) => {
@@ -1605,6 +1784,23 @@ function App() {
       }));
     } else if (activeTab === 'tab5') {
       return tab5NodesRaw.map((node) => ({
+        id: node.id,
+        type: 'custom',
+        position: { x: node.x, y: node.y },
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: 260,
+          opacity: step >= node.appearsAt ? 1 : 0,
+        },
+      }));
+    } else if (activeTab === 'tab6') {
+      return tab6NodesRaw.map((node) => ({
         id: node.id,
         type: 'custom',
         position: { x: node.x, y: node.y },
@@ -1738,6 +1934,28 @@ function App() {
           },
         };
       });
+    } else if (activeTab === 'tab6') {
+      return tab6EdgesRaw.map((edge) => {
+        const isVisible = step >= edge.appearsAt;
+        return {
+          id: `${edge.id}-print-${step}`,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
     } else {
       return tab4EdgesRaw.map((edge) => {
         const isVisible = step >= edge.appearsAt;
@@ -1773,10 +1991,12 @@ function App() {
       if (tab3Step < MAX_STEPS) setTab3Step((s) => s + 1);
     } else if (activeTab === 'tab4') {
       if (tab4Step < MAX_STEPS) setTab4Step((s) => s + 1);
-    } else {
+    } else if (activeTab === 'tab5') {
       if (tab5Step < MAX_STEPS) setTab5Step((s) => s + 1);
+    } else {
+      if (tab6Step < MAX_STEPS) setTab6Step((s) => s + 1);
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step]);
 
   const handlePrev = useCallback(() => {
     if (activeTab === 'tab1') {
@@ -1787,10 +2007,12 @@ function App() {
       if (tab3Step > 1) setTab3Step((s) => s - 1);
     } else if (activeTab === 'tab4') {
       if (tab4Step > 1) setTab4Step((s) => s - 1);
-    } else {
+    } else if (activeTab === 'tab5') {
       if (tab5Step > 1) setTab5Step((s) => s - 1);
+    } else {
+      if (tab6Step > 1) setTab6Step((s) => s - 1);
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step]);
 
   const handleReset = useCallback(() => {
     if (activeTab === 'tab1') {
@@ -1801,8 +2023,10 @@ function App() {
       setTab3Step(1);
     } else if (activeTab === 'tab4') {
       setTab4Step(1);
-    } else {
+    } else if (activeTab === 'tab5') {
       setTab5Step(1);
+    } else {
+      setTab6Step(1);
     }
   }, [activeTab]);
 
@@ -1810,7 +2034,7 @@ function App() {
     window.print();
   }, []);
 
-  const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5') => {
+  const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6') => {
     setActiveTab(tab);
   }, []);
 
@@ -1870,6 +2094,12 @@ function App() {
             className={`tab-btn ${activeTab === 'tab5' ? 'active' : ''}`}
           >
             <IconBlock /> Local Threat Prevention
+          </button>
+          <button 
+            onClick={() => handleTabChange('tab6')} 
+            className={`tab-btn ${activeTab === 'tab6' ? 'active' : ''}`}
+          >
+            <IconDatabase /> Data Loss Prevention
           </button>
         </nav>
       </header>
@@ -2041,7 +2271,9 @@ function App() {
                         ? 'Kubernetes Cluster Attack Vectors'
                         : activeTab === 'tab4'
                           ? 'EDR Requirement PRDs Architecture Map'
-                          : 'Local Threat Prevention Flow'}
+                          : activeTab === 'tab5'
+                            ? 'Local Threat Prevention Flow'
+                            : 'Data Loss Prevention Flow'}
                 </h2>
                 <span className="print-step-badge">PAGE {stepNum} of 5</span>
               </div>
