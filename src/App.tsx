@@ -855,7 +855,6 @@ const tab6NodesRaw = [
     id: 't6-protect',
     appearsAt: 4,
     badge: 'STAGE 6 — REMEDIATION',
-    title: 'Protect Document & Resend',
     description: 'When the user cancels (block), the document is rights-protected or encrypted before being routed back to the user for a compliant re-send attempt.',
     glow: 'var(--accent-indigo)',
     icon: <IconBlock />,
@@ -877,8 +876,74 @@ const tab6EdgesRaw: EdgeConfig[] = [
   { id: 'et6-protect-users', source: 't6-protect', target: 't6-users', sourceHandle: 'right', targetHandle: 'right', type: 'smoothstep', appearsAt: 5, label: 'protect & resend (loop)', color: 'var(--accent-amber)' },
 ];
 
+// --- TAB 7: System Inventory Flow ---
+const tab7NodesRaw = [
+  {
+    id: 't7-1',
+    appearsAt: 1,
+    badge: 'STAGE 1 — SCAN',
+    title: 'OS Scan & Collection',
+    description: 'The EDR agent queries the local operating system APIs, registry keys, and critical configuration files to retrieve a fresh snapshot of installed software and system configurations.',
+    glow: 'var(--accent-cyan)',
+    icon: <IconScanner />,
+    x: 50,
+    y: 250,
+  },
+  {
+    id: 't7-2',
+    appearsAt: 2,
+    badge: 'STAGE 2 — UPDATE',
+    title: 'Local Database Population',
+    description: 'Performs high-performance transactional updates (INSERT OR REPLACE) into the local agent database (syscollector.db) to record the current state of system components.',
+    glow: 'var(--accent-indigo)',
+    icon: <IconDatabase />,
+    x: 360,
+    y: 250,
+  },
+  {
+    id: 't7-3',
+    appearsAt: 3,
+    badge: 'STAGE 3 — ANALYZE',
+    title: 'Delta Analysis Detection',
+    description: 'Compares the fresh scan snapshot in memory against the historical baseline previously stored inside the local SQLite database to detect any modifications, additions, or deletions.',
+    glow: 'var(--accent-amber)',
+    icon: <IconDetection />,
+    x: 670,
+    y: 250,
+  },
+  {
+    id: 't7-4',
+    appearsAt: 4,
+    badge: 'STAGE 4 — TRANSMIT',
+    title: 'JSON Telemetry Forwarding',
+    description: 'When a baseline difference is detected, the agent formats a structured JSON telemetry message and streams it securely to the central SN360 Manager over encrypted port 1514.',
+    glow: 'var(--accent-emerald)',
+    icon: <IconShipper />,
+    x: 980,
+    y: 250,
+  },
+  {
+    id: 't7-5',
+    appearsAt: 5,
+    badge: 'STAGE 5 — INDEX',
+    title: 'Central Ingestion & Indexing',
+    description: 'The SN360 Manager decodes the telemetry stream, parses the JSON payload, and indexes it into the SN360 Indexer (OpenSearch) to trigger alerts and populate syscheck metrics.',
+    glow: 'var(--accent-rose)',
+    icon: <IconManager />,
+    x: 1290,
+    y: 250,
+  },
+];
+
+const tab7EdgesRaw: EdgeConfig[] = [
+  { id: 'et7-1-2', source: 't7-1', target: 't7-2', sourceHandle: 'right', targetHandle: 'left', appearsAt: 2, color: 'var(--accent-violet)' },
+  { id: 'et7-2-3', source: 't7-2', target: 't7-3', sourceHandle: 'right', targetHandle: 'left', appearsAt: 3, color: 'var(--accent-amber)' },
+  { id: 'et7-3-4', source: 't7-3', target: 't7-4', sourceHandle: 'right', targetHandle: 'left', appearsAt: 4, color: 'var(--accent-emerald)' },
+  { id: 'et7-4-5', source: 't7-4', target: 't7-5', sourceHandle: 'right', targetHandle: 'left', appearsAt: 5, color: 'var(--accent-rose)' },
+];
+
 // --- Walkthrough Database ---
-const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6', Record<number, {
+const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7', Record<number, {
   title: string;
   stageTag: string;
   description: string;
@@ -1138,11 +1203,52 @@ const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6
       icon: <IconBlock />,
     },
   },
+  tab7: {
+    1: {
+      title: 'OS Scan & Collection',
+      stageTag: 'COLLECTION PHASE',
+      description: 'The EDR agent queries local OS APIs, registry keys, and critical configuration files to retrieve a fresh snapshot of system software and configuration state.',
+      technicalDetails: 'The agent queries operating system components dynamically. Syscheck scans filesystem binaries and calculates cryptographic hashes, while syscollector retrieves host attributes.',
+      technologies: ['OS API Queries', 'FIM Scanning', 'Registry Enumeration', 'Syscheck Engine'],
+      icon: <IconScanner />,
+    },
+    2: {
+      title: 'Local Database Population',
+      stageTag: 'POPULATION PHASE',
+      description: 'Performs high-performance transactional updates (INSERT OR REPLACE) into the local agent SQLite database (syscollector.db) to record the current state of system components.',
+      technicalDetails: 'Standardizes and buffers updates using transient SQL transactions, ensuring minimal lock time on the local syscollector.db relational storage files.',
+      technologies: ['SQLite Engine', 'INSERT OR REPLACE', 'syscollector.db', 'SQL Transactions'],
+      icon: <IconDatabase />,
+    },
+    3: {
+      title: 'Delta Analysis Detection',
+      stageTag: 'DETECTION PHASE',
+      description: 'Compares the fresh scan snapshot in memory against the historical baseline previously stored inside the local SQLite database to detect any modifications, additions, or deletions.',
+      technicalDetails: 'Iterates and diffs the current run list against DB records. If files, keys, or configurations differ, it builds a metadata modification event block.',
+      technologies: ['Delta Calculation', 'Memory Diff', 'Baseline Validation', 'State Diffs'],
+      icon: <IconDetection />,
+    },
+    4: {
+      title: 'JSON Telemetry Forwarding',
+      stageTag: 'FORWARDING PHASE',
+      description: 'When a baseline difference is detected, the agent formats a structured JSON telemetry message and streams it securely to the central SN360 Manager over encrypted port 1514.',
+      technicalDetails: 'Aggregates diff events into secure JSON envelopes. Streams telemetry payload through the EDR shipper queue to the SN360 Manager over raw TCP socket port 1514.',
+      technologies: ['JSON Event Stream', 'TCP Shipper', 'Port 1514 Delivery', 'Encrypted TLS Transmission'],
+      icon: <IconShipper />,
+    },
+    5: {
+      title: 'Central Ingestion & Indexing',
+      stageTag: 'INGESTION PHASE',
+      description: 'The SN360 Manager decodes the telemetry stream, parses the JSON payload, and indexes it into the SN360 Indexer (OpenSearch) to trigger alerts and populate syscheck metrics.',
+      technicalDetails: 'Decodes shipper telemetry packets, parses OCSF-styled metadata fields, runs alert rules engines, and writes persistent records into the OpenSearch backend databases.',
+      technologies: ['SN360 Manager', 'Alerts Rules Engine', 'OpenSearch Indexing', 'Syscheck Dashboard'],
+      icon: <IconManager />,
+    },
+  },
 };
 
 // ==========================================
 // 3.5 Tab 4 Definitions & Markdown Renderer
-// ==========================================
 
 // Dynamically load the PRD markdown files from /prds
 const prdFiles = import.meta.glob('../prds/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
@@ -1408,13 +1514,14 @@ const MAX_STEPS = 5;
 // ==========================================
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6'>('tab1');
+  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7'>('tab1');
   const [tab1Step, setTab1Step] = useState(1);
   const [tab2Step, setTab2Step] = useState(1);
   const [tab3Step, setTab3Step] = useState(1);
   const [tab4Step, setTab4Step] = useState(1);
   const [tab5Step, setTab5Step] = useState(1);
   const [tab6Step, setTab6Step] = useState(1);
+  const [tab7Step, setTab7Step] = useState(1);
   const [selectedPrdId, setSelectedPrdId] = useState<string>('../prds/README.md');
   const [sidebarWidth, setSidebarWidth] = useState(380);
   const [isResizing, setIsResizing] = useState(false);
@@ -1447,7 +1554,7 @@ function App() {
   }, [resize, stopResizing]);
 
   // Active step depending on the tab
-  const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : activeTab === 'tab3' ? tab3Step : activeTab === 'tab4' ? tab4Step : activeTab === 'tab5' ? tab5Step : tab6Step;
+  const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : activeTab === 'tab3' ? tab3Step : activeTab === 'tab4' ? tab4Step : activeTab === 'tab5' ? tab5Step : activeTab === 'tab6' ? tab6Step : tab7Step;
 
   // ReactFlow Nodes Creation (interactive dashboard view)
   const nodes = useMemo(() => {
@@ -1549,6 +1656,25 @@ function App() {
           pointerEvents: tab6Step >= node.appearsAt ? 'auto' : 'none',
         },
       }));
+    } else if (activeTab === 'tab7') {
+      return tab7NodesRaw.map((node) => ({
+        id: node.id,
+        type: 'custom',
+        position: { x: node.x, y: node.y },
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: 260,
+          opacity: tab7Step >= node.appearsAt ? 1 : 0,
+          transition: 'opacity 0.5s ease-in-out',
+          pointerEvents: tab7Step >= node.appearsAt ? 'auto' : 'none',
+        },
+      }));
     } else {
       return parsedPrds.map((prd) => {
         const coords = getPrdCoordinates(prd.platform, prd.layer);
@@ -1581,7 +1707,7 @@ function App() {
         };
       });
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, selectedPrdId]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, selectedPrdId]);
 
   // ReactFlow Edges Creation (interactive dashboard view)
   const edges = useMemo(() => {
@@ -1700,6 +1826,29 @@ function App() {
           },
         };
       });
+    } else if (activeTab === 'tab7') {
+      return tab7EdgesRaw.map((edge) => {
+        const isVisible = tab7Step >= edge.appearsAt;
+        return {
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+            transition: 'opacity 0.4s ease',
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
     } else {
       return tab4EdgesRaw.map((edge) => {
         const isVisible = tab4Step >= edge.appearsAt;
@@ -1724,7 +1873,7 @@ function App() {
         };
       });
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step]);
 
   // Helpers to get specific state parameters per page when generating print files
   const getNodesForStep = useCallback((step: number) => {
@@ -1801,6 +1950,23 @@ function App() {
       }));
     } else if (activeTab === 'tab6') {
       return tab6NodesRaw.map((node) => ({
+        id: node.id,
+        type: 'custom',
+        position: { x: node.x, y: node.y },
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: 260,
+          opacity: step >= node.appearsAt ? 1 : 0,
+        },
+      }));
+    } else if (activeTab === 'tab7') {
+      return tab7NodesRaw.map((node) => ({
         id: node.id,
         type: 'custom',
         position: { x: node.x, y: node.y },
@@ -1956,6 +2122,28 @@ function App() {
           },
         };
       });
+    } else if (activeTab === 'tab7') {
+      return tab7EdgesRaw.map((edge) => {
+        const isVisible = step >= edge.appearsAt;
+        return {
+          id: `${edge.id}-print-${step}`,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
     } else {
       return tab4EdgesRaw.map((edge) => {
         const isVisible = step >= edge.appearsAt;
@@ -1993,10 +2181,12 @@ function App() {
       if (tab4Step < MAX_STEPS) setTab4Step((s) => s + 1);
     } else if (activeTab === 'tab5') {
       if (tab5Step < MAX_STEPS) setTab5Step((s) => s + 1);
-    } else {
+    } else if (activeTab === 'tab6') {
       if (tab6Step < MAX_STEPS) setTab6Step((s) => s + 1);
+    } else {
+      if (tab7Step < MAX_STEPS) setTab7Step((s) => s + 1);
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step]);
 
   const handlePrev = useCallback(() => {
     if (activeTab === 'tab1') {
@@ -2009,10 +2199,12 @@ function App() {
       if (tab4Step > 1) setTab4Step((s) => s - 1);
     } else if (activeTab === 'tab5') {
       if (tab5Step > 1) setTab5Step((s) => s - 1);
-    } else {
+    } else if (activeTab === 'tab6') {
       if (tab6Step > 1) setTab6Step((s) => s - 1);
+    } else {
+      if (tab7Step > 1) setTab7Step((s) => s - 1);
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step]);
 
   const handleReset = useCallback(() => {
     if (activeTab === 'tab1') {
@@ -2025,8 +2217,10 @@ function App() {
       setTab4Step(1);
     } else if (activeTab === 'tab5') {
       setTab5Step(1);
-    } else {
+    } else if (activeTab === 'tab6') {
       setTab6Step(1);
+    } else {
+      setTab7Step(1);
     }
   }, [activeTab]);
 
@@ -2034,7 +2228,7 @@ function App() {
     window.print();
   }, []);
 
-  const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6') => {
+  const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7') => {
     setActiveTab(tab);
   }, []);
 
@@ -2100,6 +2294,12 @@ function App() {
             className={`tab-btn ${activeTab === 'tab6' ? 'active' : ''}`}
           >
             <IconDatabase /> Data Loss Prevention
+          </button>
+          <button 
+            onClick={() => handleTabChange('tab7')} 
+            className={`tab-btn ${activeTab === 'tab7' ? 'active' : ''}`}
+          >
+            <IconScanner /> System Inventory
           </button>
         </nav>
       </header>
@@ -2221,7 +2421,7 @@ function App() {
 
               <div className="walkthrough-body">
                 <div className="walkthrough-title-section">
-                  <div className="walkthrough-icon-container" style={{ color: activeTab === 'tab1' ? 'var(--accent-indigo)' : activeTab === 'tab2' ? 'var(--accent-cyan)' : 'var(--accent-rose)' }}>
+                  <div className="walkthrough-icon-container" style={{ color: activeTab === 'tab1' ? 'var(--accent-indigo)' : activeTab === 'tab2' ? 'var(--accent-cyan)' : activeTab === 'tab7' ? 'var(--accent-emerald)' : 'var(--accent-rose)' }}>
                     {activeWalkthrough.icon}
                   </div>
                   <div>
@@ -2273,7 +2473,9 @@ function App() {
                           ? 'EDR Requirement PRDs Architecture Map'
                           : activeTab === 'tab5'
                             ? 'Local Threat Prevention Flow'
-                            : 'Data Loss Prevention Flow'}
+                            : activeTab === 'tab6'
+                              ? 'Data Loss Prevention Flow'
+                              : 'System Inventory Flow'}
                 </h2>
                 <span className="print-step-badge">PAGE {stepNum} of 5</span>
               </div>

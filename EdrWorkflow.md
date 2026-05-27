@@ -93,6 +93,16 @@ If the enviroment scaffolds a similar TypeScript setup that supports ReactFlow q
         style Final fill:#f9f9f9,stroke:#333
         style Users fill:#fff,stroke:#333
       ```
+    - Tab 7 for System Inventory flow. Including system collector, syscheck and ossec agent. Check the table below
+    
+| Step | Phase | Location | Logic |
+| :--- | :--- | :--- | :--- |
+| **1. Scan** | **Collection** | Endpoint | The agent queries OS APIs, registry keys, and system files to gather a fresh snapshot of the system state. |
+| **2. Update** | **Population** | Local DB | The agent performs an `INSERT OR REPLACE` operation into its local SQLite database (`syscollector.db`). |
+| **3. Analyze** | **Detection** | Memory | The agent compares the current snapshot against the data previously stored in the local SQLite database. |
+| **4. Transmit** | **Forwarding** | Network | If a difference (delta) is detected, the agent generates a JSON event and sends it to the Manager via port 1514. |
+| **5. Index** | **Ingestion** | Manager | The SN Manager processes the event and indexes it into the SN360 Indexer (OpenSearch) for visualization and alerting. |
+    
 - Each state is a node
 - Appear one after another
 
