@@ -1194,8 +1194,108 @@ const tab8EdgesRaw: EdgeConfig[] = [
   { id: 'et8-dfc-ar', source: 't8-ar', target: 't8-dfc', sourceHandle: 'right', targetHandle: 'left', appearsAt: 5, color: 'var(--accent-rose)' },
 ];
 
+// --- TAB 9: Design Decision Flow ---
+const tab9NodesRaw = [
+  // Subgraphs
+  {
+    id: 'As_Is',
+    appearsAt: 1,
+    type: 'agent-container',
+    data: { title: 'As-Is Architecture' },
+    x: 40,
+    y: 20,
+    width: 450,
+    height: 600,
+  },
+  {
+    id: 'To_Be',
+    appearsAt: 1,
+    type: 'agent-container',
+    data: { title: 'To-Be Architecture' },
+    x: 550,
+    y: 20,
+    width: 450,
+    height: 600,
+  },
+  
+  // As-Is Children
+  {
+    id: 't9-a1',
+    appearsAt: 1,
+    parentNode: 'As_Is',
+    extent: 'parent',
+    badge: 'NEW AGENT (ENTRYPOINT)',
+    title: 'new_agent',
+    description: 'The new consolidated agent entrypoint binary directing and managing core security workflows.',
+    glow: 'var(--accent-pink)',
+    icon: <IconEngine />,
+    x: 95,
+    y: 60,
+  },
+  {
+    id: 't9-b1',
+    appearsAt: 1,
+    parentNode: 'As_Is',
+    extent: 'parent',
+    badge: 'LEGACY DAEMON',
+    title: 'wazuh_agentd',
+    description: 'The legacy daemon layer proxying agent configurations and telemetry streams.',
+    glow: 'var(--accent-amber)',
+    icon: <IconManager />,
+    x: 95,
+    y: 240,
+  },
+  {
+    id: 't9-c1',
+    appearsAt: 1,
+    parentNode: 'As_Is',
+    extent: 'parent',
+    badge: 'SECURITY SERVICES',
+    title: 'sub_wazuh_processes',
+    description: 'Low-level child security processes executing OS sensory tasks and parsing telemetry streams.',
+    glow: 'var(--accent-emerald)',
+    icon: <IconActive />,
+    x: 95,
+    y: 420,
+  },
+
+  // To-Be Children
+  {
+    id: 't9-a2',
+    appearsAt: 1,
+    parentNode: 'To_Be',
+    extent: 'parent',
+    badge: 'NEW AGENT (DIRECT)',
+    title: 'new_agent',
+    description: 'The consolidated agent entrypoint communicating directly with low-level child processes.',
+    glow: 'var(--accent-pink)',
+    icon: <IconEngine />,
+    x: 95,
+    y: 60,
+  },
+  {
+    id: 't9-c2',
+    appearsAt: 1,
+    parentNode: 'To_Be',
+    extent: 'parent',
+    badge: 'SECURITY SERVICES',
+    title: 'sub_wazuh_processes',
+    description: 'Low-level child security processes reporting directly to the new consolidated agent, bypassing legacy daemon layers.',
+    glow: 'var(--accent-emerald)',
+    icon: <IconActive />,
+    x: 95,
+    y: 330,
+  },
+];
+
+const tab9EdgesRaw: EdgeConfig[] = [
+  { id: 'et9-a1-b1', source: 't9-a1', target: 't9-b1', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 1, color: 'var(--accent-pink)' },
+  { id: 'et9-b1-c1', source: 't9-b1', target: 't9-c1', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 1, color: 'var(--accent-amber)' },
+  { id: 'et9-a2-c2', source: 't9-a2', target: 't9-c2', sourceHandle: 'bottom', targetHandle: 'top', appearsAt: 1, color: 'var(--accent-pink)' },
+];
+
 // --- Walkthrough Database ---
-const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7' | 'tab8', Record<number, {
+const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7' | 'tab8' | 'tab9', Record<number, {
   title: string;
   stageTag: string;
   description: string;
@@ -1539,6 +1639,16 @@ const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6
       icon: <IconBlock />,
     },
   },
+  tab9: {
+    1: {
+      title: 'Consolidated Agent Architecture Transition',
+      stageTag: 'DESIGN DECISION',
+      description: 'The architectural shift from a multi-layered proxy pattern to a direct integration model. By removing the legacy wazuh_agentd daemon layer, the new consolidated agent directly communicates with low-level child processes, decreasing overhead and latency.',
+      technicalDetails: 'Bypasses the legacy wazuh_agentd proxy daemon completely. The new consolidated agent directly establishes IPC telemetry pipelines and configuration channels with child security processes.',
+      technologies: ['Direct IPC Sockets', 'Consolidated Daemon', 'Daemon Elimination'],
+      icon: <IconEngine />,
+    },
+  },
 };
 
 // ==========================================
@@ -1801,14 +1911,12 @@ const renderMarkdown = (text: string) => {
   return <div className="markdown-content">{renderedElements}</div>;
 };
 
-const MAX_STEPS = 5;
-
 // ==========================================
 // 4. Main Application Component
 // ==========================================
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7' | 'tab8'>('tab1');
+  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7' | 'tab8' | 'tab9'>('tab1');
   const [tab1Step, setTab1Step] = useState(1);
   const [tab2Step, setTab2Step] = useState(1);
   const [tab3Step, setTab3Step] = useState(1);
@@ -1817,6 +1925,9 @@ function App() {
   const [tab6Step, setTab6Step] = useState(1);
   const [tab7Step, setTab7Step] = useState(1);
   const [tab8Step, setTab8Step] = useState(1);
+  const [tab9Step, setTab9Step] = useState(1);
+  
+  const maxSteps = activeTab === 'tab9' ? 1 : 5;
   const [selectedPrdId, setSelectedPrdId] = useState<string>('../prds/README.md');
   const [sidebarWidth, setSidebarWidth] = useState(380);
   const [isResizing, setIsResizing] = useState(false);
@@ -1849,7 +1960,7 @@ function App() {
   }, [resize, stopResizing]);
 
   // Active step depending on the tab
-  const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : activeTab === 'tab3' ? tab3Step : activeTab === 'tab4' ? tab4Step : activeTab === 'tab5' ? tab5Step : activeTab === 'tab6' ? tab6Step : activeTab === 'tab7' ? tab7Step : tab8Step;
+  const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : activeTab === 'tab3' ? tab3Step : activeTab === 'tab4' ? tab4Step : activeTab === 'tab5' ? tab5Step : activeTab === 'tab6' ? tab6Step : activeTab === 'tab7' ? tab7Step : activeTab === 'tab8' ? tab8Step : tab9Step;
 
   // ReactFlow Nodes Creation (interactive dashboard view)
   const nodes = useMemo(() => {
@@ -1992,6 +2103,28 @@ function App() {
           pointerEvents: 'auto',
         },
       }));
+    } else if (activeTab === 'tab9') {
+      return tab9NodesRaw.map((node) => ({
+        id: node.id,
+        type: node.type || 'custom',
+        position: { x: node.x, y: node.y },
+        parentNode: node.parentNode,
+        extent: node.extent,
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: node.type === 'agent-container' ? node.width : 260,
+          height: node.type === 'agent-container' ? node.height : undefined,
+          opacity: tab9Step >= node.appearsAt ? 1 : 0,
+          transition: 'opacity 0.5s ease-in-out',
+          pointerEvents: tab9Step >= node.appearsAt ? 'auto' : 'none',
+        },
+      }));
     } else {
       return parsedPrds.map((prd) => {
         const coords = getPrdCoordinates(prd.platform, prd.layer);
@@ -2024,7 +2157,7 @@ function App() {
         };
       });
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, tab8Step, selectedPrdId]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, tab8Step, tab9Step, selectedPrdId]);
 
   // ReactFlow Edges Creation (interactive dashboard view)
   const edges = useMemo(() => {
@@ -2188,6 +2321,29 @@ function App() {
           },
         };
       });
+    } else if (activeTab === 'tab9') {
+      return tab9EdgesRaw.map((edge) => {
+        const isVisible = tab9Step >= edge.appearsAt;
+        return {
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+            transition: 'opacity 0.4s ease',
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
     } else {
       return tab4EdgesRaw.map((edge) => {
         const isVisible = tab4Step >= edge.appearsAt;
@@ -2212,7 +2368,7 @@ function App() {
         };
       });
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, tab8Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, tab8Step, tab9Step]);
 
   // Helpers to get specific state parameters per page when generating print files
   const getNodesForStep = useCallback((step: number) => {
@@ -2338,6 +2494,25 @@ function App() {
         style: {
           width: node.type === 'agent-container' ? node.width : 260,
           opacity: 1,
+        },
+      }));
+    } else if (activeTab === 'tab9') {
+      return tab9NodesRaw.map((node) => ({
+        id: node.id,
+        type: node.type || 'custom',
+        position: { x: node.x, y: node.y },
+        parentNode: node.parentNode,
+        extent: node.extent,
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: node.type === 'agent-container' ? node.width : 260,
+          opacity: step >= node.appearsAt ? 1 : 0,
         },
       }));
     } else {
@@ -2523,6 +2698,28 @@ function App() {
           },
         };
       });
+    } else if (activeTab === 'tab9') {
+      return tab9EdgesRaw.map((edge) => {
+        const isVisible = step >= edge.appearsAt;
+        return {
+          id: `${edge.id}-print-${step}`,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: isVisible ? edge.label : undefined,
+          className: isVisible ? 'flowing-animated-edge' : '',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: isVisible ? 1 : 0,
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: isVisible ? edge.color : 'transparent',
+          },
+        };
+      });
     } else {
       return tab4EdgesRaw.map((edge) => {
         const isVisible = step >= edge.appearsAt;
@@ -2551,23 +2748,25 @@ function App() {
   // --- Step Controls ---
   const handleNext = useCallback(() => {
     if (activeTab === 'tab1') {
-      if (tab1Step < MAX_STEPS) setTab1Step((s) => s + 1);
+      if (tab1Step < 5) setTab1Step((s) => s + 1);
     } else if (activeTab === 'tab2') {
-      if (tab2Step < MAX_STEPS) setTab2Step((s) => s + 1);
+      if (tab2Step < 5) setTab2Step((s) => s + 1);
     } else if (activeTab === 'tab3') {
-      if (tab3Step < MAX_STEPS) setTab3Step((s) => s + 1);
+      if (tab3Step < 5) setTab3Step((s) => s + 1);
     } else if (activeTab === 'tab4') {
-      if (tab4Step < MAX_STEPS) setTab4Step((s) => s + 1);
+      if (tab4Step < 5) setTab4Step((s) => s + 1);
     } else if (activeTab === 'tab5') {
-      if (tab5Step < MAX_STEPS) setTab5Step((s) => s + 1);
+      if (tab5Step < 5) setTab5Step((s) => s + 1);
     } else if (activeTab === 'tab6') {
-      if (tab6Step < MAX_STEPS) setTab6Step((s) => s + 1);
+      if (tab6Step < 5) setTab6Step((s) => s + 1);
     } else if (activeTab === 'tab7') {
-      if (tab7Step < MAX_STEPS) setTab7Step((s) => s + 1);
+      if (tab7Step < 5) setTab7Step((s) => s + 1);
     } else if (activeTab === 'tab8') {
-      if (tab8Step < MAX_STEPS) setTab8Step((s) => s + 1);
+      if (tab8Step < 5) setTab8Step((s) => s + 1);
+    } else if (activeTab === 'tab9') {
+      if (tab9Step < 1) setTab9Step((s) => s + 1);
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, tab8Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, tab8Step, tab9Step]);
 
   const handlePrev = useCallback(() => {
     if (activeTab === 'tab1') {
@@ -2586,8 +2785,10 @@ function App() {
       if (tab7Step > 1) setTab7Step((s) => s - 1);
     } else if (activeTab === 'tab8') {
       if (tab8Step > 1) setTab8Step((s) => s - 1);
+    } else if (activeTab === 'tab9') {
+      if (tab9Step > 1) setTab9Step((s) => s - 1);
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, tab8Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, tab8Step, tab9Step]);
 
   const handleReset = useCallback(() => {
     if (activeTab === 'tab1') {
@@ -2606,6 +2807,8 @@ function App() {
       setTab7Step(1);
     } else if (activeTab === 'tab8') {
       setTab8Step(1);
+    } else if (activeTab === 'tab9') {
+      setTab9Step(1);
     }
   }, [activeTab]);
 
@@ -2613,7 +2816,7 @@ function App() {
     window.print();
   }, []);
 
-  const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7' | 'tab8') => {
+  const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7' | 'tab8' | 'tab9') => {
     setActiveTab(tab);
   }, []);
 
@@ -2692,6 +2895,12 @@ function App() {
           >
             <IconEngine /> Component Architecture
           </button>
+          <button 
+            onClick={() => handleTabChange('tab9')} 
+            className={`tab-btn ${activeTab === 'tab9' ? 'active' : ''}`}
+          >
+            <IconEngine /> Design Decision
+          </button>
         </nav>
       </header>
 
@@ -2729,7 +2938,7 @@ function App() {
               </button>
               <button 
                 onClick={handleNext} 
-                disabled={activeStep >= MAX_STEPS} 
+                disabled={activeStep >= maxSteps} 
                 className="nav-btn"
               >
                 Next Step
@@ -2745,7 +2954,7 @@ function App() {
             {/* Futuristic Stepper Progress Indicators */}
             <div className="stepper-progress-container">
               <div className="stepper-dots-row">
-                {Array.from({ length: MAX_STEPS }).map((_, idx) => {
+                {Array.from({ length: maxSteps }).map((_, idx) => {
                   const stepNum = idx + 1;
                   const isActive = stepNum === activeStep;
                   const isPassed = stepNum < activeStep;
@@ -2758,7 +2967,7 @@ function App() {
                 })}
               </div>
               <span className="step-label-counter">
-                Phase {activeStep} of {MAX_STEPS}
+                Phase {activeStep} of {maxSteps}
               </span>
             </div>
           </div>
@@ -2847,7 +3056,7 @@ function App() {
 
     {/* Hidden print container that renders all 5 steps, each as a page */}
     <div className="print-only-container">
-        {Array.from({ length: 5 }).map((_, idx) => {
+        {Array.from({ length: maxSteps }).map((_, idx) => {
           const stepNum = idx + 1;
           const stepWalkthrough = walkthroughData[activeTab][stepNum];
           return (
@@ -2868,9 +3077,11 @@ function App() {
                               ? 'Data Loss Prevention Flow'
                               : activeTab === 'tab7'
                                 ? 'System Inventory Flow'
-                                : 'Endpoint Agent Component Architecture'}
+                                : activeTab === 'tab8'
+                                  ? 'Endpoint Agent Component Architecture'
+                                  : 'Architecture Design Decision'}
                 </h2>
-                <span className="print-step-badge">PAGE {stepNum} of 5</span>
+                <span className="print-step-badge">PAGE {stepNum} of {maxSteps}</span>
               </div>
               
               <div className="print-flow-container">

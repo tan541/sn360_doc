@@ -141,6 +141,25 @@ graph TB
         Agent_Daemon --- DFC
     end
 ```
+    - tab 9 for Design Decision. Check below mermaid. Just one step.
+```mermaid
+graph TD
+    subgraph As_Is ["As-Is Architecture"]
+        A1[new_agent] --> B1[wazuh_agentd]
+        B1 --> C1[sub_wazuh_processes]
+    end
+
+    subgraph To_Be ["To-Be Architecture"]
+        A2[new_agent] --> C2[sub_wazuh_processes]
+    end
+
+    style A1 fill:#f9f,stroke:#333,stroke-width:2px
+    style B1 fill:#ff9,stroke:#333,stroke-width:2px
+    style C1 fill:#9f9,stroke:#333,stroke-width:2px
+    
+    style A2 fill:#f9f,stroke:#333,stroke-width:2px
+    style C2 fill:#9f9,stroke:#333,stroke-width:2px
+```
 - Each state is a node
 - Appear one after another
 
