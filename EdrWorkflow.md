@@ -103,6 +103,44 @@ If the enviroment scaffolds a similar TypeScript setup that supports ReactFlow q
 | **4. Transmit** | **Forwarding** | Network | If a difference (delta) is detected, the agent generates a JSON event and sends it to the Manager via port 1514. |
 | **5. Index** | **Ingestion** | Manager | The SN Manager processes the event and indexes it into the SN360 Indexer (OpenSearch) for visualization and alerting. |
     
+    - Tab 8 for Endpoint agent component architecture. Check below mermaid
+```mermaid
+graph TB
+    subgraph "Endpoint security agent"
+        direction TB
+        
+        subgraph Agent_Modules [Agent modules]
+            direction TB
+            AR[Active response]
+            CE[Command execution]
+            CA[Configuration assessment]
+            CS[Container security]
+            ClS[Cloud security]
+            FIM[File integrity monitoring]
+            LC[Log collector]
+            MD[Malware detection]
+            SI[System inventory]
+            
+            AR ~~~ CE ~~~ CA ~~~ CS ~~~ ClS ~~~ FIM ~~~ LC ~~~ MD ~~~ SI
+        end
+
+        subgraph Agent_Daemon [Agent daemon]
+            direction TB
+            DE[Data encryption]
+            MM[Modules management]
+            RC[Remote configuration]
+            SA[Server authentication]
+            
+            DE ~~~ MM ~~~ RC ~~~ SA
+        end
+
+        DFC[Data flow control]
+
+        %% Connections
+        Agent_Modules --- DFC
+        Agent_Daemon --- DFC
+    end
+```
 - Each state is a node
 - Appear one after another
 

@@ -282,9 +282,21 @@ const K8sClusterNodeComponent = () => {
   );
 };
 
+const AgentContainerNodeComponent = ({ data }: { data: { title: string } }) => {
+  return (
+    <div className="agent-container-container">
+      <div className="agent-container-header">
+        <span className="agent-pulse" />
+        {data.title}
+      </div>
+    </div>
+  );
+};
+
 const nodeTypes = {
   custom: CustomNodeComponent,
   'k8s-cluster': K8sClusterNodeComponent,
+  'agent-container': AgentContainerNodeComponent,
 };
 
 // ==========================================
@@ -942,8 +954,248 @@ const tab7EdgesRaw: EdgeConfig[] = [
   { id: 'et7-4-5', source: 't7-4', target: 't7-5', sourceHandle: 'right', targetHandle: 'left', appearsAt: 5, color: 'var(--accent-rose)' },
 ];
 
+// --- TAB 8: Endpoint Agent Component Architecture ---
+const tab8NodesRaw = [
+  // Outer Shell
+  {
+    id: 'ESA',
+    appearsAt: 1,
+    type: 'agent-container',
+    data: { title: 'Endpoint Security Agent (Main Container)' },
+    x: 40,
+    y: 20,
+    width: 1420,
+    height: 580,
+  },
+  // Sub-containers
+  {
+    id: 'Agent_Daemon',
+    appearsAt: 1,
+    type: 'agent-container',
+    data: { title: 'Agent Daemon Processes' },
+    x: 1030,
+    y: 60,
+    width: 320,
+    height: 520,
+  },
+  {
+    id: 'Agent_Modules',
+    appearsAt: 3,
+    type: 'agent-container',
+    data: { title: 'Loaded Security Modules' },
+    x: 70,
+    y: 60,
+    width: 580,
+    height: 520,
+  },
+  // Central DFC Node
+  {
+    id: 't8-dfc',
+    appearsAt: 3,
+    badge: 'CENTRAL COORDINATOR',
+    title: 'Data Flow Control (DFC)',
+    description: 'High-speed event router orchestrating internal IPC telemetry streams and memory buffers.',
+    glow: 'var(--accent-indigo)',
+    icon: <IconBuffer />,
+    x: 710,
+    y: 240,
+  },
+  // Daemon Children (inside Agent_Daemon parentNode)
+  {
+    id: 't8-sa',
+    appearsAt: 1,
+    parentNode: 'Agent_Daemon',
+    extent: 'parent',
+    badge: 'DAEMON SECURE',
+    title: 'Server Auth (SA)',
+    description: 'Verifies remote EDR manager identity and secures session validation keys.',
+    glow: 'var(--accent-cyan)',
+    icon: <IconManager />,
+    x: 30,
+    y: 40,
+  },
+  {
+    id: 't8-de',
+    appearsAt: 1,
+    parentNode: 'Agent_Daemon',
+    extent: 'parent',
+    badge: 'DAEMON CRYPTO',
+    title: 'Data Encryption (DE)',
+    description: 'Enforces local database encryption to shield telemetry queue buffers.',
+    glow: 'var(--accent-cyan)',
+    icon: <IconNeverConnected />,
+    x: 30,
+    y: 150,
+  },
+  {
+    id: 't8-rc',
+    appearsAt: 2,
+    parentNode: 'Agent_Daemon',
+    extent: 'parent',
+    badge: 'DAEMON CONFIG',
+    title: 'Remote Config (RC)',
+    description: 'Pulls real-time profile updates and active protection policies from cloud.',
+    glow: 'var(--accent-indigo)',
+    icon: <IconPending />,
+    x: 30,
+    y: 260,
+  },
+  {
+    id: 't8-mm',
+    appearsAt: 2,
+    parentNode: 'Agent_Daemon',
+    extent: 'parent',
+    badge: 'DAEMON LOADER',
+    title: 'Modules Mgmt (MM)',
+    description: 'Spawns worker subprocesses, threads, and maps kernel sensor driver layers.',
+    glow: 'var(--accent-indigo)',
+    icon: <IconEngine />,
+    x: 30,
+    y: 370,
+  },
+  // Modules Children (inside Agent_Modules parentNode)
+  // Column 1
+  {
+    id: 't8-ar',
+    appearsAt: 5,
+    parentNode: 'Agent_Modules',
+    extent: 'parent',
+    badge: 'REMEDIATION ACTION',
+    title: 'Active Response (AR)',
+    description: 'Executes firewall host lockouts or halts compromised runtime PIDs.',
+    glow: 'var(--accent-rose)',
+    icon: <IconBlock />,
+    x: 20,
+    y: 40,
+  },
+  {
+    id: 't8-ce',
+    appearsAt: 5,
+    parentNode: 'Agent_Modules',
+    extent: 'parent',
+    badge: 'EXECUTION TARGET',
+    title: 'Command Execution (CE)',
+    description: 'Securely processes administration scripts pushed from Cloud SIEM.',
+    glow: 'var(--accent-indigo)',
+    icon: <IconRCE />,
+    x: 20,
+    y: 130,
+  },
+  {
+    id: 't8-ca',
+    appearsAt: 4,
+    parentNode: 'Agent_Modules',
+    extent: 'parent',
+    badge: 'COMPLIANCE AUDIT',
+    title: 'Config Assessment (CA)',
+    description: 'Checks host setups against global system configuration hardening standards.',
+    glow: 'var(--accent-amber)',
+    icon: <IconAPI />,
+    x: 20,
+    y: 220,
+  },
+  {
+    id: 't8-cs',
+    appearsAt: 4,
+    parentNode: 'Agent_Modules',
+    extent: 'parent',
+    badge: 'CONTAINER SENSOR',
+    title: 'Container Security (CS)',
+    description: 'Listens to docker runtime triggers and monitors sandbox isolations.',
+    glow: 'var(--accent-cyan)',
+    icon: <IconPod />,
+    x: 20,
+    y: 310,
+  },
+  {
+    id: 't8-cls',
+    appearsAt: 4,
+    parentNode: 'Agent_Modules',
+    extent: 'parent',
+    badge: 'CLOUD SENSOR',
+    title: 'Cloud Security (ClS)',
+    description: 'Retrieves active host instance metadata and parses security rules.',
+    glow: 'var(--accent-cyan)',
+    icon: <IconManager />,
+    x: 20,
+    y: 400,
+  },
+  // Column 2
+  {
+    id: 't8-fim',
+    appearsAt: 4,
+    parentNode: 'Agent_Modules',
+    extent: 'parent',
+    badge: 'FILE INTEGRITY',
+    title: 'File Integrity (FIM)',
+    description: 'Watches systems directories for root changes and verifies file SHA integrity.',
+    glow: 'var(--accent-violet)',
+    icon: <IconScanner />,
+    x: 300,
+    y: 40,
+  },
+  {
+    id: 't8-lc',
+    appearsAt: 4,
+    parentNode: 'Agent_Modules',
+    extent: 'parent',
+    badge: 'COLLECTOR MODULE',
+    title: 'Log Collector (LC)',
+    description: 'Polls system journal logs and subscribes to low-level syslog events.',
+    glow: 'var(--accent-cyan)',
+    icon: <IconSource />,
+    x: 300,
+    y: 130,
+  },
+  {
+    id: 't8-md',
+    appearsAt: 4,
+    parentNode: 'Agent_Modules',
+    extent: 'parent',
+    badge: 'MALWARE SENSOR',
+    title: 'Malware Det (MD)',
+    description: 'Runs real-time executable scans against local threat intelligence databases.',
+    glow: 'var(--accent-rose)',
+    icon: <IconDisconnected />,
+    x: 300,
+    y: 220,
+  },
+  {
+    id: 't8-si',
+    appearsAt: 4,
+    parentNode: 'Agent_Modules',
+    extent: 'parent',
+    badge: 'INVENTORY MODULE',
+    title: 'System Inventory (SI)',
+    description: 'Periodically sweeps system software packages and active ports.',
+    glow: 'var(--accent-emerald)',
+    icon: <IconActive />,
+    x: 300,
+    y: 310,
+  },
+];
+
+const tab8EdgesRaw: EdgeConfig[] = [
+  // central Data Flow Control coordinator feeds into Daemon components (encryption & configuration)
+  { id: 'et8-de-dfc', source: 't8-dfc', target: 't8-de', sourceHandle: 'right', targetHandle: 'left', appearsAt: 3, color: 'var(--accent-indigo)' },
+  { id: 'et8-mm-dfc', source: 't8-dfc', target: 't8-mm', sourceHandle: 'right', targetHandle: 'left', appearsAt: 3, color: 'var(--accent-indigo)' },
+  
+  // Security modules feed telemetry into the central DFC coordinator
+  { id: 'et8-dfc-lc', source: 't8-lc', target: 't8-dfc', sourceHandle: 'right', targetHandle: 'left', appearsAt: 4, color: 'var(--accent-cyan)' },
+  { id: 'et8-dfc-fim', source: 't8-fim', target: 't8-dfc', sourceHandle: 'right', targetHandle: 'left', appearsAt: 4, color: 'var(--accent-violet)' },
+  { id: 'et8-dfc-si', source: 't8-si', target: 't8-dfc', sourceHandle: 'right', targetHandle: 'left', appearsAt: 4, color: 'var(--accent-emerald)' },
+  { id: 'et8-dfc-md', source: 't8-md', target: 't8-dfc', sourceHandle: 'right', targetHandle: 'left', appearsAt: 4, color: 'var(--accent-rose)' },
+  { id: 'et8-dfc-cs', source: 't8-cs', target: 't8-dfc', sourceHandle: 'right', targetHandle: 'left', appearsAt: 4, color: 'var(--accent-cyan)' },
+  { id: 'et8-dfc-cls', source: 't8-cls', target: 't8-dfc', sourceHandle: 'right', targetHandle: 'left', appearsAt: 4, color: 'var(--accent-cyan)' },
+  { id: 'et8-dfc-ca', source: 't8-ca', target: 't8-dfc', sourceHandle: 'right', targetHandle: 'left', appearsAt: 4, color: 'var(--accent-amber)' },
+  
+  // Reaction / execution modules feed/receive triggers through central DFC
+  { id: 'et8-dfc-ce', source: 't8-ce', target: 't8-dfc', sourceHandle: 'right', targetHandle: 'left', appearsAt: 5, color: 'var(--accent-indigo)' },
+  { id: 'et8-dfc-ar', source: 't8-ar', target: 't8-dfc', sourceHandle: 'right', targetHandle: 'left', appearsAt: 5, color: 'var(--accent-rose)' },
+];
+
 // --- Walkthrough Database ---
-const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7', Record<number, {
+const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7' | 'tab8', Record<number, {
   title: string;
   stageTag: string;
   description: string;
@@ -1245,6 +1497,48 @@ const walkthroughData: Record<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6
       icon: <IconManager />,
     },
   },
+  tab8: {
+    1: {
+      title: 'Server Auth & Encryption',
+      stageTag: 'SECURE DAEMON BOOT',
+      description: 'The Endpoint Security Agent daemon starts up, initializes the Server Authentication (SA) interface to verify EDR manager credentials, and triggers Data Encryption (DE) to shield local database files.',
+      technicalDetails: 'SA performs mutual TLS (mTLS) handshakes using pre-pinned CA certificates. DE activates AES-256 encryption on the SQLite database (syscollector.db) in-memory queues.',
+      technologies: ['mTLS Handshake', 'CA Cert Pinning', 'AES-256 (DE)', 'Tamper Protection'],
+      icon: <IconManager />,
+    },
+    2: {
+      title: 'Remote Config & Module Loader',
+      stageTag: 'DYNAMIC POLICIES LOAD',
+      description: 'The agent queries the EDR manager configuration gateway, downloads updated protection policies via Remote Configuration (RC), and Modules Management (MM) loads appropriate sensory drivers.',
+      technicalDetails: 'RC pulls YAML policies, verifying digital signatures. MM allocates subprocess blocks and dedicated thread pools for file system hooks and log polling modules.',
+      technologies: ['YAML Policy Engine', 'Signature Check', 'Subprocess Spawning', 'Thread Pools'],
+      icon: <IconPending />,
+    },
+    3: {
+      title: 'Central Data Flow Coordinator',
+      stageTag: 'DFC ROUTER ACTIVE',
+      description: 'Data Flow Control (DFC) initializes. It acts as the central coordinator and high-speed in-memory message bus connecting low-level security modules with the core daemon shipper.',
+      technicalDetails: 'Establishes lock-free ring buffers and IPC queues to manage event rates. Throttles high-volume collectors to prevent endpoint resource saturation.',
+      technologies: ['Lock-free Ring Buffer', 'IPC Telemetry Queues', 'Event Rate Limiter', 'Memory Management'],
+      icon: <IconBuffer />,
+    },
+    4: {
+      title: 'Core Telemetry Sensors',
+      stageTag: 'ACTIVE THREAT SCANNING',
+      description: 'Core sensors are armed and register their pipelines with the DFC. Log Collector (LC), File Integrity (FIM), System Inventory (SI), and Malware Detection (MD) actively scan memory and file structures.',
+      technicalDetails: 'FIM deploys OS-specific filesystem filters. MD conducts YARA static scans on execution triggers. SI audits local packages, while CS and ClS inspect virtual container namespaces.',
+      technologies: ['FIM Filter Drivers', 'YARA Scanning', 'CS Container Namespace', 'ClS Metadata Sync'],
+      icon: <IconScanner />,
+    },
+    5: {
+      title: 'Active Remediation & Containment',
+      stageTag: 'ACTIVE RESPONSE',
+      description: 'Remediation and script execution modules are armed. Upon threat detection or a cloud containment command, Active Response (AR) and Command Execution (CE) isolate host networks.',
+      technicalDetails: 'AR triggers dynamic firewall blocks and kills rogue PIDs. CE processes secure python/bash administrative containment scripts signed by the SOC admin.',
+      technologies: ['Host Isolation', 'PID Quarantine', 'Secure Command Exec', 'Firewall Block'],
+      icon: <IconBlock />,
+    },
+  },
 };
 
 // ==========================================
@@ -1514,7 +1808,7 @@ const MAX_STEPS = 5;
 // ==========================================
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7'>('tab1');
+  const [activeTab, setActiveTab] = useState<'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7' | 'tab8'>('tab1');
   const [tab1Step, setTab1Step] = useState(1);
   const [tab2Step, setTab2Step] = useState(1);
   const [tab3Step, setTab3Step] = useState(1);
@@ -1522,6 +1816,7 @@ function App() {
   const [tab5Step, setTab5Step] = useState(1);
   const [tab6Step, setTab6Step] = useState(1);
   const [tab7Step, setTab7Step] = useState(1);
+  const [tab8Step, setTab8Step] = useState(1);
   const [selectedPrdId, setSelectedPrdId] = useState<string>('../prds/README.md');
   const [sidebarWidth, setSidebarWidth] = useState(380);
   const [isResizing, setIsResizing] = useState(false);
@@ -1554,7 +1849,7 @@ function App() {
   }, [resize, stopResizing]);
 
   // Active step depending on the tab
-  const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : activeTab === 'tab3' ? tab3Step : activeTab === 'tab4' ? tab4Step : activeTab === 'tab5' ? tab5Step : activeTab === 'tab6' ? tab6Step : tab7Step;
+  const activeStep = activeTab === 'tab1' ? tab1Step : activeTab === 'tab2' ? tab2Step : activeTab === 'tab3' ? tab3Step : activeTab === 'tab4' ? tab4Step : activeTab === 'tab5' ? tab5Step : activeTab === 'tab6' ? tab6Step : activeTab === 'tab7' ? tab7Step : tab8Step;
 
   // ReactFlow Nodes Creation (interactive dashboard view)
   const nodes = useMemo(() => {
@@ -1675,6 +1970,28 @@ function App() {
           pointerEvents: tab7Step >= node.appearsAt ? 'auto' : 'none',
         },
       }));
+    } else if (activeTab === 'tab8') {
+      return tab8NodesRaw.map((node) => ({
+        id: node.id,
+        type: node.type || 'custom',
+        position: { x: node.x, y: node.y },
+        parentNode: node.parentNode,
+        extent: node.extent,
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: node.type === 'agent-container' ? node.width : 260,
+          height: node.type === 'agent-container' ? node.height : undefined,
+          opacity: 1,
+          transition: 'opacity 0.5s ease-in-out',
+          pointerEvents: 'auto',
+        },
+      }));
     } else {
       return parsedPrds.map((prd) => {
         const coords = getPrdCoordinates(prd.platform, prd.layer);
@@ -1707,7 +2024,7 @@ function App() {
         };
       });
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, selectedPrdId]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, tab8Step, selectedPrdId]);
 
   // ReactFlow Edges Creation (interactive dashboard view)
   const edges = useMemo(() => {
@@ -1849,6 +2166,28 @@ function App() {
           },
         };
       });
+    } else if (activeTab === 'tab8') {
+      return tab8EdgesRaw.map((edge) => {
+        return {
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: edge.label,
+          className: 'flowing-animated-edge',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: 1,
+            transition: 'opacity 0.4s ease',
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: edge.color || 'var(--accent-indigo)',
+          },
+        };
+      });
     } else {
       return tab4EdgesRaw.map((edge) => {
         const isVisible = tab4Step >= edge.appearsAt;
@@ -1873,7 +2212,7 @@ function App() {
         };
       });
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, tab8Step]);
 
   // Helpers to get specific state parameters per page when generating print files
   const getNodesForStep = useCallback((step: number) => {
@@ -1980,6 +2319,25 @@ function App() {
         style: {
           width: 260,
           opacity: step >= node.appearsAt ? 1 : 0,
+        },
+      }));
+    } else if (activeTab === 'tab8') {
+      return tab8NodesRaw.map((node) => ({
+        id: node.id,
+        type: node.type || 'custom',
+        position: { x: node.x, y: node.y },
+        parentNode: node.parentNode,
+        extent: node.extent,
+        data: {
+          badge: node.badge,
+          title: node.title,
+          description: node.description,
+          glow: node.glow,
+          icon: node.icon,
+        },
+        style: {
+          width: node.type === 'agent-container' ? node.width : 260,
+          opacity: 1,
         },
       }));
     } else {
@@ -2144,6 +2502,27 @@ function App() {
           },
         };
       });
+    } else if (activeTab === 'tab8') {
+      return tab8EdgesRaw.map((edge) => {
+        return {
+          id: `${edge.id}-print-${step}`,
+          source: edge.source,
+          target: edge.target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+          type: edge.type || 'default',
+          label: edge.label,
+          className: 'flowing-animated-edge',
+          style: {
+            '--edge-color': edge.color || 'var(--accent-indigo)',
+            opacity: 1,
+          } as React.CSSProperties,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: edge.color || 'var(--accent-indigo)',
+          },
+        };
+      });
     } else {
       return tab4EdgesRaw.map((edge) => {
         const isVisible = step >= edge.appearsAt;
@@ -2183,10 +2562,12 @@ function App() {
       if (tab5Step < MAX_STEPS) setTab5Step((s) => s + 1);
     } else if (activeTab === 'tab6') {
       if (tab6Step < MAX_STEPS) setTab6Step((s) => s + 1);
-    } else {
+    } else if (activeTab === 'tab7') {
       if (tab7Step < MAX_STEPS) setTab7Step((s) => s + 1);
+    } else if (activeTab === 'tab8') {
+      if (tab8Step < MAX_STEPS) setTab8Step((s) => s + 1);
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, tab8Step]);
 
   const handlePrev = useCallback(() => {
     if (activeTab === 'tab1') {
@@ -2201,10 +2582,12 @@ function App() {
       if (tab5Step > 1) setTab5Step((s) => s - 1);
     } else if (activeTab === 'tab6') {
       if (tab6Step > 1) setTab6Step((s) => s - 1);
-    } else {
+    } else if (activeTab === 'tab7') {
       if (tab7Step > 1) setTab7Step((s) => s - 1);
+    } else if (activeTab === 'tab8') {
+      if (tab8Step > 1) setTab8Step((s) => s - 1);
     }
-  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step]);
+  }, [activeTab, tab1Step, tab2Step, tab3Step, tab4Step, tab5Step, tab6Step, tab7Step, tab8Step]);
 
   const handleReset = useCallback(() => {
     if (activeTab === 'tab1') {
@@ -2219,8 +2602,10 @@ function App() {
       setTab5Step(1);
     } else if (activeTab === 'tab6') {
       setTab6Step(1);
-    } else {
+    } else if (activeTab === 'tab7') {
       setTab7Step(1);
+    } else if (activeTab === 'tab8') {
+      setTab8Step(1);
     }
   }, [activeTab]);
 
@@ -2228,7 +2613,7 @@ function App() {
     window.print();
   }, []);
 
-  const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7') => {
+  const handleTabChange = useCallback((tab: 'tab1' | 'tab2' | 'tab3' | 'tab4' | 'tab5' | 'tab6' | 'tab7' | 'tab8') => {
     setActiveTab(tab);
   }, []);
 
@@ -2300,6 +2685,12 @@ function App() {
             className={`tab-btn ${activeTab === 'tab7' ? 'active' : ''}`}
           >
             <IconScanner /> System Inventory
+          </button>
+          <button 
+            onClick={() => handleTabChange('tab8')} 
+            className={`tab-btn ${activeTab === 'tab8' ? 'active' : ''}`}
+          >
+            <IconEngine /> Component Architecture
           </button>
         </nav>
       </header>
@@ -2421,7 +2812,7 @@ function App() {
 
               <div className="walkthrough-body">
                 <div className="walkthrough-title-section">
-                  <div className="walkthrough-icon-container" style={{ color: activeTab === 'tab1' ? 'var(--accent-indigo)' : activeTab === 'tab2' ? 'var(--accent-cyan)' : activeTab === 'tab7' ? 'var(--accent-emerald)' : 'var(--accent-rose)' }}>
+                  <div className="walkthrough-icon-container" style={{ color: activeTab === 'tab1' ? 'var(--accent-indigo)' : activeTab === 'tab2' ? 'var(--accent-cyan)' : activeTab === 'tab7' ? 'var(--accent-emerald)' : activeTab === 'tab8' ? 'var(--accent-indigo)' : 'var(--accent-rose)' }}>
                     {activeWalkthrough.icon}
                   </div>
                   <div>
@@ -2475,7 +2866,9 @@ function App() {
                             ? 'Local Threat Prevention Flow'
                             : activeTab === 'tab6'
                               ? 'Data Loss Prevention Flow'
-                              : 'System Inventory Flow'}
+                              : activeTab === 'tab7'
+                                ? 'System Inventory Flow'
+                                : 'Endpoint Agent Component Architecture'}
                 </h2>
                 <span className="print-step-badge">PAGE {stepNum} of 5</span>
               </div>
